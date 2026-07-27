@@ -1,136 +1,72 @@
-name: TechJobs AI-Powered CI/CD Pipeline
+name: WorkVerse CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, master, develop ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  security-events: write
-
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+    branches: [ main, develop ]
 
 jobs:
-  # ---------------------------------------------------------------------------
-  # 1. Java Spring Boot Backend CI Pipeline
-  # ---------------------------------------------------------------------------
   backend-ci:
-    name: ☕ Backend Build & Test (Spring Boot)
+    name: Backend Build & Test
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: ☕ Set up JDK 17
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
-          cache-dependency-path: 'backend/pom.xml'
 
-      - name: 📦 Build & Test Backend with Maven
-        working-directory: ./backend
-        run: |
-          mvn clean test -B
-
-      - name: 🛠 Package Executable JAR
-        working-directory: ./backend
-        run: |
-          mvn package -DskipTests -B
-
-      - name: 🐳 Build Docker Container Image
-        working-directory: ./backend
-        run: |
-          docker build -t techjobs-backend:${{ github.sha }} .
-
-      - name: 🛡 Security Audit & Vulnerability Check
-        run: |
-          echo "Backend security scan completed successfully."
-
-  # ---------------------------------------------------------------------------
-  # 2. Frontend React + Vite CI Pipeline
-  # ---------------------------------------------------------------------------
+      - name: Build with Maven
+        run: mvn clean package -B
+        
   frontend-ci:
-    name: ⚡ Frontend Build & E2E Test (Vite + React)
+    name: Frontend Build & E2E Test
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 🟢 Set up Node.js 22
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 20
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
 
-      - name: 📦 Install Dependencies
-        working-directory: ./frontend
-        run: |
-          npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: 🏗 Build Production Asset Bundle
-        working-directory: ./frontend
-        run: |
-          npm run build
+      - name: Build frontend
+        run: npm run build
 
-      - name: 🎭 Install Playwright Browsers
-        working-directory: ./frontend
-        run: |
-          npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-      - name: 🧪 Run Playwright E2E Tests
-        working-directory: ./frontend
-        run: |
-          npx playwright test --pass-with-no-tests
+      - name: Run Playwright tests
+        run: npx playwright test
+        
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: ./frontend/playwright-report/
+          retention-days: 10
 
-  # ---------------------------------------------------------------------------
-  # 3. AI Quality & Code Security Gate
-  # ---------------------------------------------------------------------------
-  ai-quality-gate:
-    name: 🤖 AI Quality & Security Gate
-    needs: [backend-ci, frontend-ci]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 🤖 AI Code Quality Audit
-        run: |
-          echo "===================================================="
-          echo "🤖 AI Code Quality & Compliance Evaluation Completed"
-          echo "===================================================="
-          echo "✅ Backend JDK 17 Spring Boot build & JUnit tests PASSED"
-          echo "✅ Frontend Vite React 18 production bundle PASSED"
-          echo "✅ Playwright End-to-End browser tests PASSED"
-          echo "✅ DPDP Act Data Privacy & Audit checks PASSED"
-          echo "===================================================="
-
-  # ---------------------------------------------------------------------------
-  # 4. Automated CD Deployment
-  # ---------------------------------------------------------------------------
   deploy:
-    name: 🚀 Production CD Deployment
-    needs: [ai-quality-gate]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    name: Production Deployment
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 🚀 Deploy Frontend SPA
-        run: |
-          echo "Deploying Vite production bundle to Vercel/CDN..."
-
-      - name: 🚀 Deploy Backend Container
-        run: |
-          echo "Deploying Spring Boot Docker container to Cloud Platform..."
+      - name: Deploy Placeholder
+        run: echo "Deployment would run here"
