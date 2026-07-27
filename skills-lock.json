@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-browser": {
+      "source": "qu-skills/skills",
+      "sourceType": "github",
+      "skillPath": "tools/utilities/agent-browser/SKILL.md",
+      "computedHash": "3c0141144e8a1ef454e2dd72649b6a3f16112974ebc7e617fdf1795d0d8e6c0c"
+    },
+    "animation-vocabulary": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/animation-vocabulary/SKILL.md",
+      "computedHash": "280c6688ef2568ad92f40c4dc638f0cc5cde0f49bdd6debd097410aa9945f44f"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "93f53fd1c0352d3d7ec17b8f73d7351bf76f4821e55d123c9d2abc2c53ba48e4"
+    }
+  }
+}
