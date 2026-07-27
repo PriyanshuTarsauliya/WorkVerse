@@ -3,7 +3,7 @@
  * Interfaces with backend /api/interview/generate and handles Web-native Speech TTS & Chimes
  */
 
-const API_BASE_URL = 'http://localhost:8080/api/interview';
+const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/interview` : 'http://localhost:8080/api/interview';
 
 // ── Daily Rate Limiter (Client-side fallback tracker) ──
 export function checkDailyQuota(userId = 'default_user') {

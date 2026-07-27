@@ -48,30 +48,32 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @org.springframework.beans.factory.annotation.Value("${spring.h2.console.enabled:false}")
+    private boolean h2ConsoleEnabled;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                    auth
-                        // Public endpoints
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/jobs/**")).permitAll()
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll();
+                    if (h2ConsoleEnabled) {
+                        auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
+                    }
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/jobs/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/companies/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/salary-guide/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/referrals/validate/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/interview/**")).permitAll()
-                        // Admin endpoints — require ROLE_ADMIN (enforced via @PreAuthorize on AdminController)
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/admin/**")).hasRole("ADMIN")
-                        // All other API endpoints require authentication
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/**")).authenticated()
-                        .anyRequest().permitAll()
-                );
+                        .anyRequest().permitAll();
+                });
 
-        // Fix H2 console display (frame options)
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+        if (h2ConsoleEnabled) {
+            http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+        }
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

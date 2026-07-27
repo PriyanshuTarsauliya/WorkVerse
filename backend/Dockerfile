@@ -15,5 +15,10 @@ EXPOSE 8080
 # Copy compiled JAR artifact from Stage 1
 COPY --from=builder /app/target/*.jar app.jar
 
+# Create a non-root user and group
+RUN addgroup -S spring && adduser -S spring -G spring
+RUN chown spring:spring app.jar
+USER spring:spring
+
 # Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
