@@ -63,13 +63,11 @@ jobs:
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: 🟢 Set up Node.js 20
+      - name: 🟢 Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
 
@@ -91,7 +89,7 @@ jobs:
       - name: 🧪 Run Playwright E2E Tests
         working-directory: ./frontend
         run: |
-          npx playwright test --pass-with-no-tests || true
+          npx playwright test --pass-with-no-tests
 
   # ---------------------------------------------------------------------------
   # 3. AI Quality & Code Security Gate
