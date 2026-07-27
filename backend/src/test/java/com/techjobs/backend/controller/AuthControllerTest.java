@@ -85,7 +85,7 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Error: Email is already in use!")));
+                .andExpect(content().string(containsString("Email is already in use!")));
     }
 
     @Test
