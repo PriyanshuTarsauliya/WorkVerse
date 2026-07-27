@@ -78,6 +78,11 @@ jobs:
         run: |
           npm run build
 
+      - name: 🎭 Install Playwright Browsers
+        working-directory: ./frontend
+        run: |
+          npx playwright install --with-deps
+
       - name: 🧪 Run Playwright E2E Tests
         working-directory: ./frontend
         run: |
