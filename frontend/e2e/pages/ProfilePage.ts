@@ -12,7 +12,7 @@ export class ProfilePage {
   readonly addSkillButton: Locator;
   readonly saveButton: Locator;
   readonly successMessage: Locator;
-  readonly errorMessage: Locator;
+  readonly editButton: Locator;
   readonly closeButton: Locator;
 
   constructor(page: Page) {
@@ -29,6 +29,7 @@ export class ProfilePage {
     this.successMessage = page.locator('[data-testid="profile-success-message"]');
     this.errorMessage = page.locator('[data-testid="profile-error-message"]');
     this.closeButton = page.locator('[data-testid="profile-close-button"]');
+    this.editButton = page.locator('[data-testid="profile-edit-button"]');
   }
 
   async openModal() {
@@ -43,6 +44,9 @@ export class ProfilePage {
   }
 
   async fillProfileForm(name: string, location: string, expYears?: string) {
+    if (!(await this.nameInput.isVisible())) {
+      await this.editButton.click();
+    }
     await this.nameInput.fill(name);
     await this.locationInput.fill(location);
     if (expYears) {

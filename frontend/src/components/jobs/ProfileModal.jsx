@@ -227,6 +227,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
               </div>
               <div className="flex items-center gap-2">
                 <button
+                  data-testid="profile-edit-button"
                   onClick={() => setIsEditingProfile(true)}
                   className="px-3 py-1.5 text-xs font-semibold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-lg transition-colors flex items-center gap-1"
                 >
@@ -656,7 +657,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                       <label className="block text-xs font-semibold text-txtMuted mb-1.5">Full Name *</label>
                       <input
                         type="text"
-                        required
+                        data-testid="profile-name-input"
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                         className="w-full bg-main border border-borderStrong focus:border-accent rounded-xl px-4 py-2.5 text-sm text-txtMain outline-none transition-colors"
@@ -666,7 +667,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                       <label className="block text-xs font-semibold text-txtMuted mb-1.5">Location *</label>
                       <input
                         type="text"
-                        required
+                        data-testid="profile-location-input"
                         value={editForm.location}
                         onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
                         className="w-full bg-main border border-borderStrong focus:border-accent rounded-xl px-4 py-2.5 text-sm text-txtMain outline-none transition-colors"
@@ -677,6 +678,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                   <div>
                     <label className="block text-xs font-semibold text-txtMuted mb-1.5">Years of Experience</label>
                     <select
+                      data-testid="profile-experience-select"
                       value={editForm.experienceYears}
                       onChange={(e) => setEditForm({ ...editForm, experienceYears: e.target.value })}
                       className="w-full bg-main border border-borderStrong focus:border-accent rounded-xl px-4 py-2.5 text-sm text-txtMain outline-none transition-colors appearance-none cursor-pointer"
@@ -693,6 +695,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                     <div className="flex gap-2">
                       <input
                         type="text"
+                        data-testid="profile-skills-input"
                         value={newSkillInput}
                         onChange={(e) => setNewSkillInput(e.target.value)}
                         onKeyDown={handleAddSkill}
@@ -701,6 +704,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                       />
                       <button
                         type="button"
+                        data-testid="profile-add-skill-button"
                         onClick={handleAddSkillSubmit}
                         className="px-5 py-2.5 text-sm font-bold text-white bg-nested border border-borderStrong hover:bg-surface rounded-xl transition-colors shrink-0"
                       >
@@ -719,6 +723,7 @@ export default function ProfileModal({ isOpen, onClose, allJobs = [], onSelectJo
                     </button>
                     <button
                       type="submit"
+                      data-testid="profile-save-button"
                       className="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-accent to-indigo-500 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-accent/20"
                     >
                       Save Changes

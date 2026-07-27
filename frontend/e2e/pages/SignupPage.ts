@@ -65,9 +65,40 @@ export class SignupPage {
     await expect(this.authErrorMessage).toBeVisible();
     await expect(this.authErrorMessage).toContainText(messageSubstr);
   }
-
   async assertLoggedIn() {
-    await expect(this.userProfileButton).toBeVisible();
+    // Check if onboarding wizard is visible and bypass it
+    const wizard = this.page.locator('[data-testid="onboarding-wizard"]');
+    try {
+      await wizard.waitFor({ state: 'visible', timeout: 5000 });
+      await this.page.waitForTimeout(500); // wait for enter animation
+
+      // Step 0
+      await this.page.locator('[data-testid="discovery-search"]').click();
+      await this.page.locator('[data-testid="profession-job_seeker"]').click();
+      await this.page.locator('button:has-text("Continue")').click();
+
+      // Step 1
+      await this.page.locator('h3:has-text("Upload your resume")').waitFor({ state: 'visible' });
+      await this.page.waitForTimeout(500);
+      await this.page.locator('button:has-text("Continue")').click();
+
+      // Step 2
+      const finishBtn = this.page.locator('button:has-text("Finish Setup")');
+      await finishBtn.waitFor({ state: 'visible' });
+      await this.page.waitForTimeout(500);
+      await finishBtn.click();
+
+      // Step 3
+      const exploreBtn = this.page.locator('[data-testid="onboarding-finish"]');
+      await exploreBtn.waitFor({ state: 'visible' });
+      await this.page.waitForTimeout(500);
+      await exploreBtn.click();
+      await wizard.waitFor({ state: 'hidden', timeout: 5000 });
+    } catch (e) {
+      console.log("BYPASS LOGIC FAILED:", e);
+    }
+    
+    await expect(this.userProfileButton).toBeVisible({ timeout: 10000 });
     await expect(this.authModal).toBeHidden();
   }
 }
