@@ -11,6 +11,9 @@ permissions:
   contents: read
   security-events: write
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
 jobs:
   # ---------------------------------------------------------------------------
   # 1. Java Spring Boot Backend CI Pipeline
@@ -60,6 +63,8 @@ jobs:
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 🟢 Set up Node.js 20
         uses: actions/setup-node@v4
