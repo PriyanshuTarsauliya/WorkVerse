@@ -9,8 +9,6 @@ services:
     name: tech-jobs-backend
     env: docker
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
     envVars:
       - key: DB_HOST
         fromDatabase:
