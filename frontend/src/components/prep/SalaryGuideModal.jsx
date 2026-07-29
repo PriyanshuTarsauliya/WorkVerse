@@ -261,10 +261,10 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
               <div className="text-right sm:border-l sm:border-borderSubtle sm:pl-6 shrink-0">
                 <div className="flex items-center justify-end gap-1.5 text-xs text-emerald-400 font-bold mb-1">
                   <TrendingUp className="w-4 h-4" /> 
-                  {demandData ? `${demandData.posting_count_level} Demand` : '+14.2% YoY Growth'}
+                  {demandData && demandData.posting_count_level ? `${demandData.posting_count_level} Demand` : '+14.2% YoY Growth'}
                 </div>
                 <p className="text-[11px] text-txtMuted">
-                  {demandData ? `${demandData.posting_count.toLocaleString()} Active Job Postings (Careerjet)` : 'High demand role across top startups'}
+                  {demandData && demandData.posting_count != null ? `${demandData.posting_count.toLocaleString()} Active Job Postings (Careerjet)` : 'High demand role across top startups'}
                 </p>
               </div>
             </div>

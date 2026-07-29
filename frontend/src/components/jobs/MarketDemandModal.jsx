@@ -89,7 +89,7 @@ export default function MarketDemandModal({ isOpen, onClose }) {
                 <Activity className="w-8 h-8 text-indigo-400 animate-pulse mb-3" />
                 <p className="text-sm text-txtMuted">Analyzing job market data...</p>
               </div>
-            ) : demandData ? (
+            ) : demandData && demandData.posting_count != null ? (
               <div className="bg-nested rounded-xl border border-borderSubtle p-6 text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-400 mb-4">
                   <TrendingUp className="w-6 h-6" />
