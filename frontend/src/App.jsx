@@ -28,6 +28,7 @@ import PremiumModal from './components/jobs/PremiumModal';
 import DeckView from './components/jobs/DeckView';
 import ApplicationTracker from './components/jobs/ApplicationTracker';
 import JobAlertsModal from './components/jobs/JobAlertsModal';
+import MarketDemandModal from './components/jobs/MarketDemandModal';
 import ReferralModal from './components/jobs/ReferralModal';
 import DigilockerKYCModal from './components/auth/DigilockerKYCModal';
 import DPDPAuditModal from './components/auth/DPDPAuditModal';
@@ -287,6 +288,7 @@ function AppContent() {
   const [isATSOpen, setIsATSOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isMarketDemandOpen, setIsMarketDemandOpen] = useState(false);
   const [showLocationBanner, setShowLocationBanner] = useState(true);
   const [userDetectedCity, setUserDetectedCity] = useState('');
   const [viewMode, setViewMode] = useState(() => {
@@ -644,10 +646,16 @@ function AppContent() {
                 DPDP Privacy
               </button>
               <button
-                onClick={() => setIsAdminOpen(true)}
+                onClick={() => setIsATSOpen(true)}
                 className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
               >
-                Admin
+                Tools
+              </button>
+              <button
+                onClick={() => setIsMarketDemandOpen(true)}
+                className="px-3 py-1.5 rounded-lg text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors font-semibold flex items-center gap-1"
+              >
+                <TrendingUp className="w-3.5 h-3.5" /> Insights
               </button>
               <button
                 onClick={() => setIsAIMockInterviewOpen(true)}
@@ -789,6 +797,13 @@ function AppContent() {
                     className="px-5 py-3 text-xs font-bold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-xl transition-all flex items-center gap-2"
                   >
                     <Sparkles className="w-4 h-4 text-accent" /> AI Interview Studio
+                  </button>
+
+                  <button
+                    onClick={() => setIsMarketDemandOpen(true)}
+                    className="px-5 py-3 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-2"
+                  >
+                    <TrendingUp className="w-4 h-4" /> Market Demand
                   </button>
 
                   <button
@@ -1092,6 +1107,11 @@ function AppContent() {
                       Companies Directory
                     </button>
                   </li>
+                  <li>
+                    <button onClick={() => setIsMarketDemandOpen(true)} className="hover:text-txtMain transition-colors flex items-center gap-1">
+                      <TrendingUp className="w-3.5 h-3.5" /> Market Insights
+                    </button>
+                  </li>
                 </ul>
               </div>
               <div>
@@ -1217,6 +1237,10 @@ function AppContent() {
       <AdminModerationModal
         isOpen={isAdminOpen}
         onClose={() => setIsAdminOpen(false)}
+      />
+      <MarketDemandModal 
+        isOpen={isMarketDemandOpen}
+        onClose={() => setIsMarketDemandOpen(false)}
       />
       <AIChatbotWidget />
     </div>

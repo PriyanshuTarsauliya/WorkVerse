@@ -67,6 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v1/referrals/validate/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/interview/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/recommendations/**")).permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/insights/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/admin/**")).hasRole("ADMIN")
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/**")).authenticated()
                         .anyRequest().permitAll();

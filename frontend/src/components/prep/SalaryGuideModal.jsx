@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, DollarSign, TrendingUp, Award, MapPin, Briefcase, Zap, Building2, HelpCircle, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
 
@@ -105,9 +105,20 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
   const [selectedExpLevel, setSelectedExpLevel] = useState('mid');
   const [currency, setCurrency] = useState('INR'); // 'INR' | 'USD'
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [demandData, setDemandData] = useState(null);
 
   const currentRole = SALARY_DATA[selectedRoleKey] || SALARY_DATA['frontend'];
   const locationObj = LOCATION_MULTIPLIERS[selectedLocationKey] || LOCATION_MULTIPLIERS['bengaluru'];
+
+  useEffect(() => {
+    if (isOpen) {
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+      fetch(`${API_BASE_URL}/insights/market-demand?keywords=${encodeURIComponent(currentRole.title)}&location=${encodeURIComponent(locationObj.label)}`)
+        .then(res => res.json())
+        .then(data => setDemandData(data))
+        .catch(err => console.error(err));
+    }
+  }, [isOpen, selectedRoleKey, selectedLocationKey]);
 
   const calculatedBaseSalary = useMemo(() => {
     const rawInr = currentRole.base[selectedExpLevel] * locationObj.factor;
@@ -248,10 +259,13 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
               </div>
 
               <div className="text-right sm:border-l sm:border-borderSubtle sm:pl-6 shrink-0">
-                <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold mb-1">
-                  <TrendingUp className="w-4 h-4" /> +14.2% YoY Growth
+                <div className="flex items-center justify-end gap-1.5 text-xs text-emerald-400 font-bold mb-1">
+                  <TrendingUp className="w-4 h-4" /> 
+                  {demandData ? `${demandData.posting_count_level} Demand` : '+14.2% YoY Growth'}
                 </div>
-                <p className="text-[11px] text-txtMuted">High demand role across top Indian startups & MNCs</p>
+                <p className="text-[11px] text-txtMuted">
+                  {demandData ? `${demandData.posting_count.toLocaleString()} Active Job Postings (Careerjet)` : 'High demand role across top startups'}
+                </p>
               </div>
             </div>
 
