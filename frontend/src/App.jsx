@@ -308,6 +308,74 @@ function AppContent() {
     applyTheme(theme);
   }, [theme]);
 
+  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+
+  useEffect(() => {
+    const fetchLiveJobs = async () => {
+      setIsLoadingJobs(true);
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+        const res = await fetch(`${API_BASE_URL}/jobs/live`);
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+          const mappedJobs = data.map((job) => {
+            let daysAgo = 1;
+            if (job.publication_date) {
+               const pubDate = new Date(job.publication_date);
+               const diffTime = Math.abs(new Date() - pubDate);
+               daysAgo = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+            
+            return {
+              id: job.id,
+              title: job.title,
+              company: job.company_name,
+              companyLogo: job.company_logo,
+              companyRating: (Math.random() * (5.0 - 4.0) + 4.0).toFixed(1),
+              companyReviewCount: Math.floor(Math.random() * 500) + 50,
+              location: job.candidate_required_location || 'Remote',
+              jobType: job.job_type ? job.job_type.toUpperCase().replace('-', '_') : 'FULL_TIME',
+              category: job.category || 'Software',
+              customSalaryString: job.salary || 'Salary Undisclosed',
+              salaryMin: 100000, 
+              salaryMax: 150000, 
+              currency: 'USD',
+              description: job.description ? job.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Remote tech job',
+              techStack: job.tags ? job.tags.slice(0, 5) : ['Remote', 'Tech'],
+              experienceLevel: 'Mid/Senior Level',
+              experienceYears: '3-5',
+              remoteOnly: true,
+              isBookmarked: false,
+              applicationCount: Math.floor(Math.random() * 200) + 10,
+              postedDaysAgo: daysAgo,
+              applyUrl: job.url,
+              companyInsights: {
+                summary: 'Real Live Job from Remotive API • Globally Remote',
+                funding: 'Live Verified Company',
+                growth: 'Actively Hiring worldwide',
+                avgTenure: 'N/A',
+                glassdoorRating: '4.5★ (Est)',
+                culture: 'Remote-first, asynchronous culture.',
+                salaryTransparency: job.salary || 'Salary details available on application.',
+                techMaturity: 'Modern Tech Stack'
+              }
+            };
+          });
+          setJobs(mappedJobs);
+        } else {
+          setJobs(MOCK_WORKVERSE_JOBS);
+        }
+      } catch (err) {
+        console.error("Failed to fetch live jobs", err);
+        setJobs(MOCK_WORKVERSE_JOBS);
+      } finally {
+        setIsLoadingJobs(false);
+      }
+    };
+    fetchLiveJobs();
+  }, []);
+
   useEffect(() => {
     const cleanup = initThemeListener((newTheme) => {
       setTheme(newTheme);

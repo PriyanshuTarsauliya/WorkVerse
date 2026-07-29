@@ -148,8 +148,17 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
               {job.location}
             </span>
             <span className="flex items-center gap-1 text-success font-bold" data-testid={`job-salary-${job.id}`}>
-              <IndianRupee className="w-3.5 h-3.5" />
-              {formatSalaryRupees(job.salaryMin, job.salaryMax)}
+              {job.customSalaryString ? (
+                <>
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[150px]" title={job.customSalaryString}>{job.customSalaryString}</span>
+                </>
+              ) : (
+                <>
+                  <IndianRupee className="w-3.5 h-3.5" />
+                  {formatSalaryRupees(job.salaryMin, job.salaryMax)}
+                </>
+              )}
             </span>
           </div>
 
@@ -243,7 +252,11 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
-                  onClick={(e) => { e.stopPropagation(); onApply(job, true); }}
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    if (job.applyUrl) window.open(job.applyUrl, '_blank');
+                    else onApply(job, true); 
+                  }}
                   data-testid={`quick-apply-button-${job.id}`}
                   className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-lg transition-all duration-150 shadow-sm flex items-center gap-1"
                   title="Apply instantly with 1 click using saved resume & profile"

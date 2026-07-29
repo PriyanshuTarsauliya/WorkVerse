@@ -118,7 +118,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
                 {job.location}
               </span>
               <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-success bg-success-bg border border-success/30 rounded-md" data-testid="job-detail-salary">
-                {formatSalary(job.salaryMin, job.salaryMax)}
+                {job.customSalaryString ? job.customSalaryString : formatSalary(job.salaryMin, job.salaryMax)}
               </span>
               {job.postedDaysAgo != null && (
                 <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-txtMuted bg-nested border border-borderSubtle rounded-md">
@@ -289,8 +289,12 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
-                      onClose();
-                      onOpenApply(job, true);
+                      if (job.applyUrl) {
+                         window.open(job.applyUrl, '_blank');
+                      } else {
+                         onClose();
+                         onOpenApply(job, true);
+                      }
                     }}
                     data-testid="job-detail-quick-apply-button"
                     className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl transition-all shadow-md flex items-center gap-1.5"
@@ -301,8 +305,12 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
 
                   <button
                     onClick={() => {
-                      onClose();
-                      onOpenApply(job, false);
+                      if (job.applyUrl) {
+                         window.open(job.applyUrl, '_blank');
+                      } else {
+                         onClose();
+                         onOpenApply(job, false);
+                      }
                     }}
                     data-testid="job-detail-apply-button"
                     className="px-5 py-2.5 text-sm font-bold text-txtMain bg-nested hover:bg-borderSubtle border border-borderSubtle rounded-xl transition-all"
