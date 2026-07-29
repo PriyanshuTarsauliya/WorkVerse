@@ -27,7 +27,6 @@ import HiringChallengesModal from './components/prep/HiringChallengesModal';
 import PremiumModal from './components/jobs/PremiumModal';
 import DeckView from './components/jobs/DeckView';
 import ApplicationTracker from './components/jobs/ApplicationTracker';
-import RealJobsModal from './components/jobs/RealJobsModal';
 import JobAlertsModal from './components/jobs/JobAlertsModal';
 import ReferralModal from './components/jobs/ReferralModal';
 import DigilockerKYCModal from './components/auth/DigilockerKYCModal';
@@ -288,7 +287,6 @@ function AppContent() {
   const [isATSOpen, setIsATSOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [isRealJobsOpen, setIsRealJobsOpen] = useState(false);
   const [showLocationBanner, setShowLocationBanner] = useState(true);
   const [userDetectedCity, setUserDetectedCity] = useState('');
   const [viewMode, setViewMode] = useState(() => {
@@ -628,12 +626,6 @@ function AppContent() {
                 Companies
               </button>
               <button
-                onClick={() => setIsRealJobsOpen(true)}
-                className="px-3 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors font-semibold flex items-center gap-1"
-              >
-                <Globe className="w-3.5 h-3.5" /> Real Jobs
-              </button>
-              <button
                 onClick={() => setIsATSOpen(true)}
                 className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
               >
@@ -797,13 +789,6 @@ function AppContent() {
                     className="px-5 py-3 text-xs font-bold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-xl transition-all flex items-center gap-2"
                   >
                     <Sparkles className="w-4 h-4 text-accent" /> AI Interview Studio
-                  </button>
-
-                  <button
-                    onClick={() => setIsRealJobsOpen(true)}
-                    className="px-5 py-3 text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 rounded-xl shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2"
-                  >
-                    <Globe className="w-4 h-4" /> 🌍 Real Jobs
                   </button>
 
                   <button
@@ -1107,11 +1092,6 @@ function AppContent() {
                       Companies Directory
                     </button>
                   </li>
-                  <li>
-                    <button onClick={() => setIsRealJobsOpen(true)} className="hover:text-txtMain transition-colors">
-                      🌍 Real Jobs (Live)
-                    </button>
-                  </li>
                 </ul>
               </div>
               <div>
@@ -1237,11 +1217,6 @@ function AppContent() {
       <AdminModerationModal
         isOpen={isAdminOpen}
         onClose={() => setIsAdminOpen(false)}
-      />
-      <RealJobsModal
-        isOpen={isRealJobsOpen}
-        onClose={() => setIsRealJobsOpen(false)}
-        candidateProfile={candidateProfile}
       />
       <AIChatbotWidget />
     </div>
