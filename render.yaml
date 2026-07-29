@@ -1,0 +1,40 @@
+databases:
+  - name: tech-jobs-db
+    plan: free
+    databaseName: techjobs
+    user: dbuser
+
+services:
+  - type: web
+    name: tech-jobs-backend
+    env: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: backend/Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: tech-jobs-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: tech-jobs-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: tech-jobs-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: tech-jobs-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: tech-jobs-db
+          property: password
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:3000,https://workverse.vercel.app
