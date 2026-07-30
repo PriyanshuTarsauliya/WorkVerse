@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MapPin, DollarSign, Clock, Users, Star, Share2, Zap, TrendingUp, Bookmark, Sparkles, IndianRupee, CheckCircle
+  MapPin, DollarSign, Clock, Users, Star, Share2, Zap, TrendingUp, Bookmark, Sparkles, IndianRupee, CheckCircle, Eye, Flame
 } from 'lucide-react';
 import SpotlightCard from '../ui/SpotlightCard';
 
@@ -75,6 +75,14 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
   const isTopRecommended = matchScore && matchScore >= 80;
   const hasApplied = applications?.[job.id] === 'applied';
   const isSaved = applications?.[job.id] === 'saved';
+  
+  // Simulated live viewers
+  const [liveViewers] = React.useState(() => Math.floor(Math.random() * 18) + 3);
+  
+  // Urgency level
+  const isUrgent = job.urgency === 'Actively Hiring' || (job.postedDaysAgo && job.postedDaysAgo <= 2);
+  const isFewApplicants = (job.applicationCount || 0) < 10;
+  const isTrending = (job.applicationCount || 0) > 100;
 
   return (
     <motion.div
@@ -101,6 +109,24 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
           Top Recommendation
         </div>
       )}
+
+      {/* Urgency Badge — Left Side */}
+      {!isTopRecommended && isUrgent && (
+        <div className="absolute -top-3 left-4 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg flex items-center gap-1 z-20">
+          <Flame className="w-3 h-3 fill-white" />
+          Closing Soon
+        </div>
+      )}
+
+      {/* Live Viewers Badge */}
+      <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface/80 backdrop-blur-sm border border-borderSubtle text-[10px] text-txtMuted z-20">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+        </span>
+        <Eye className="w-2.5 h-2.5" />
+        {liveViewers} viewing
+      </div>
 
       <div className="flex flex-col h-full justify-between relative z-10">
         {/* Header row */}
@@ -278,9 +304,10 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
                   else onApply(job, true); 
                 }}
                 data-testid={`quick-apply-button-${job.id}`}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-black bg-amber-500 hover:bg-amber-600 rounded-lg transition-all shadow-sm shadow-amber-500/20 cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:via-orange-500 hover:to-red-500 rounded-lg transition-all shadow-md shadow-amber-500/30 cursor-pointer relative overflow-hidden group/btn"
                 title="Apply instantly with saved resume"
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
                 <Zap className="w-3.5 h-3.5" />
                 Quick Apply
               </motion.button>

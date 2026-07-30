@@ -38,6 +38,10 @@ import DPDPAuditModal from './components/auth/DPDPAuditModal';
 import EmployerATSModal from './components/jobs/EmployerATSModal';
 import ReportJobModal from './components/jobs/ReportJobModal';
 import AdminModerationModal from './components/jobs/AdminModerationModal';
+import LiveActivityTicker from './components/ui/LiveActivityTicker';
+import TrustBanner from './components/ui/TrustBanner';
+import StreakBanner from './components/ui/StreakBanner';
+import { useConfetti } from './components/ui/Confetti';
 
 import { DEFAULT_CANDIDATE_PROFILE, calculateJobMatchScore, generateProfileSuggestions } from './utils/recommendationEngine';
 import { getInitialTheme, applyTheme, saveThemeChoice, initThemeListener } from './utils/theme';
@@ -241,6 +245,7 @@ import { fetchApi } from './utils/api';
 
 function AppContent() {
   const toast = useToast();
+  const fireConfetti = useConfetti();
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [candidateProfile, setCandidateProfile] = useState(() => {
@@ -533,6 +538,7 @@ function AppContent() {
           return next;
         });
         toast(`⚡ 1-Click Quick Applied to ${job.title} at ${job.company}!`, 'success');
+        fireConfetti();
         return;
       }
       toast('Please confirm your contact details & resume for Quick Apply', 'info');
@@ -549,7 +555,8 @@ function AppContent() {
       return next;
     });
     toast('Application submitted successfully!', 'success');
-  }, [toast]);
+    fireConfetti();
+  }, [toast, fireConfetti]);
   const handleJobPosted = useCallback((newJob) => {
     setJobs((prev) => [newJob, ...prev]);
     toast('Job posted successfully!', 'success');
@@ -895,6 +902,12 @@ function AppContent() {
           </AnimatePresence>
         </motion.header>
 
+        {/* ── Live Social Proof Ticker ── */}
+        <LiveActivityTicker />
+
+        {/* ── Streak Gamification Banner ── */}
+        <StreakBanner />
+
         {/* ── Signature AnimatedHero Section ── */}
         <AnimatedHero
           onExploreClick={() => {
@@ -903,6 +916,9 @@ function AppContent() {
           }}
           onPrepClick={() => setIsAIMockInterviewOpen(true)}
         />
+
+        {/* ── Trust Stats & Company Logos ── */}
+        <TrustBanner />
 
         {/* ── Section: How WorkVerse Works (Full Bleed) ── */}
         <section className="w-full bg-surface/50 border-b border-borderSubtle py-12 relative">

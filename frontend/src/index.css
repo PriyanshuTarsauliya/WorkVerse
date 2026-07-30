@@ -173,3 +173,37 @@ input[type="range"]::-webkit-slider-thumb:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* Fade mask for scrolling ticker */
+.mask-fade-horizontal {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* Subtle pulse for badges */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Sparkle fly animation for confetti sparkles */
+@keyframes sparkle-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+}
+
+/* Glow shimmer for buttons */
+@keyframes glow-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.btn-glow-shimmer {
+  background-size: 200% auto;
+  animation: glow-shimmer 3s linear infinite;
+}
+
