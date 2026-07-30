@@ -112,7 +112,7 @@ export default function JobFilterBar({
           <div className="w-px bg-borderSubtle my-1.5 shrink-0" />
 
           {/* Location Search */}
-          <div className="relative w-44 shrink-0">
+          <div className="relative w-24 sm:w-44 shrink-0">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-txtMuted pointer-events-none" />
             <input
               type="text"

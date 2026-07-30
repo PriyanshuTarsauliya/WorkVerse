@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase, Globe, Rss, Share, Mail, Sparkles, Sun, Moon, SearchX, RotateCcw,
   Building2, Award, Zap, CheckCircle2, ArrowRight, ShieldCheck, FileText, Cpu,
-  ChevronRight, ChevronDown, Send, Users, TrendingUp, Check, Star, Terminal
+  ChevronRight, ChevronDown, Send, Users, TrendingUp, Check, Star, Terminal, Menu, X
 } from 'lucide-react';
 import { AnimatedHero } from './components/hero/AnimatedHero';
 import { ToastProvider, useToast } from './components/Toast';
@@ -298,6 +298,7 @@ function AppContent() {
   const [isAiToolsDropdownOpen, setIsAiToolsDropdownOpen] = useState(false);
   const [showLocationBanner, setShowLocationBanner] = useState(true);
   const [userDetectedCity, setUserDetectedCity] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [viewMode, setViewMode] = useState(() => {
     if (typeof window === 'undefined') return 'grid';
     return localStorage.getItem('workverse_view_mode') || 'grid';
@@ -824,8 +825,74 @@ function AppContent() {
               >
                 Post a Job
               </button>
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden w-8 h-8 rounded-lg bg-nested border border-borderSubtle flex items-center justify-center text-txtMuted hover:text-txtMain transition-colors"
+              >
+                {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="md:hidden border-t border-borderSubtle bg-main/95 backdrop-blur-md overflow-hidden"
+              >
+                <div className="p-4 space-y-4">
+                  <div>
+                    <h3 className="text-xs font-bold text-txtMuted uppercase tracking-wider mb-2">Explore</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button onClick={() => { handleResetFilters(); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <Briefcase className="w-3.5 h-3.5 text-amber-500" /> Browse Jobs
+                      </button>
+                      <button onClick={() => { setIsSalaryGuideOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <TrendingUp className="w-3.5 h-3.5 text-emerald-400" /> Salary Guide
+                      </button>
+                      <button onClick={() => { setIsCompaniesDirectoryOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <Building2 className="w-3.5 h-3.5 text-indigo-400" /> Companies
+                      </button>
+                      <button onClick={() => { setIsMarketDemandOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <Zap className="w-3.5 h-3.5 text-amber-400" /> Market Insights
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-xs font-bold text-txtMuted uppercase tracking-wider mb-2">AI Tools</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button onClick={() => { setIsAIMockInterviewOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-emerald-500/10 text-emerald-400 font-semibold flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5" /> Voice Mock
+                      </button>
+                      <button onClick={() => { setIsPrepHubOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <FileText className="w-3.5 h-3.5 text-amber-400" /> ATS Checker
+                      </button>
+                      <button onClick={() => { setIsCodingPlaygroundOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <Terminal className="w-3.5 h-3.5 text-indigo-400" /> Coding
+                      </button>
+                      <button onClick={() => { setIsHiringChallengesOpen(true); setIsMobileMenuOpen(false); }} className="text-left px-3 py-2 text-xs rounded-lg bg-nested hover:bg-surface text-txtMain flex items-center gap-2">
+                        <Award className="w-3.5 h-3.5 text-rose-400" /> Challenges
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2 border-t border-borderSubtle">
+                    <button
+                      onClick={() => { setIsResumeBuilderOpen(true); setIsMobileMenuOpen(false); }}
+                      className="w-full text-center px-3 py-2 text-xs font-semibold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-lg transition-colors"
+                    >
+                      Resume Builder
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.header>
 
         {/* ── Signature AnimatedHero Section ── */}
