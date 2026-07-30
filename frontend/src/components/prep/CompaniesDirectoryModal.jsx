@@ -2,122 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Building2, Search, Star, Users, MapPin, ExternalLink, Briefcase, ChevronRight, Award, CheckCircle2, Maximize2, Minimize2 } from 'lucide-react';
 
-const COMPANIES_DATABASE = [
-  {
-    id: 'razorpay',
-    name: 'Razorpay',
-    category: 'Fintech / Payments',
-    rating: 4.8,
-    reviewCount: 1420,
-    headquarters: 'Bengaluru, India',
-    size: '2,500+ employees',
-    funding: '$370M Series F (Unicorn)',
-    avgTenure: '2.4 yrs',
-    techStack: ['React', 'TypeScript', 'Node.js', 'Go', 'PHP/Laravel', 'Kubernetes'],
-    description: 'Razorpay is India\'s leading payments and financial technology platform empowering over 8M businesses to accept, process, and disburse payments.',
-    benefits: ['Flexible WFH / Hybrid', 'Comprehensive Health Cover', 'Annual Learning Allowance', 'Stock Options (ESOPs)'],
-    openJobsCount: 14,
-    featuredJobs: [
-      { id: 1, title: 'Senior Frontend Engineer', location: 'Bengaluru, India', salary: '₹22 - ₹35 LPA' },
-      { id: 101, title: 'Staff Backend Architect (Go/Distributed)', location: 'Bengaluru, India', salary: '₹35 - ₹55 LPA' },
-    ]
-  },
-  {
-    id: 'swiggy',
-    name: 'Swiggy',
-    category: 'Consumer Tech / Logistics',
-    rating: 4.6,
-    reviewCount: 980,
-    headquarters: 'Bengaluru, India',
-    size: '5,000+ employees',
-    funding: 'Publicly Traded (NSE/BSE)',
-    avgTenure: '2.1 yrs',
-    techStack: ['Java', 'Go', 'React Native', 'Python', 'Kafka', 'AWS'],
-    description: 'Swiggy is India\'s premier on-demand convenience platform, delivering food, groceries (Instamart), and packages across 500+ cities.',
-    benefits: ['4-Day Work Month Perks', 'Generous ESOP Vesting', 'Wellness & Gym Stipend', 'Relocation Assistance'],
-    openJobsCount: 22,
-    featuredJobs: [
-      { id: 2, title: 'Product Manager — Growth & Retention', location: 'Bengaluru, India', salary: '₹28 - ₹42 LPA' },
-      { id: 102, title: 'Lead Data Scientist (Quick-Commerce Logistics)', location: 'Bengaluru, India', salary: '₹32 - ₹50 LPA' },
-    ]
-  },
-  {
-    id: 'postman',
-    name: 'Postman',
-    category: 'SaaS / Developer Tools',
-    rating: 4.9,
-    reviewCount: 430,
-    headquarters: 'San Francisco & Bengaluru',
-    size: '1,000+ employees',
-    funding: '$225M Series D ($5.6B Valuation)',
-    avgTenure: '2.8 yrs',
-    techStack: ['Next.js', 'React', 'Python', 'FastAPI', 'PostgreSQL', 'Electron'],
-    description: 'Postman is the world\'s leading API collaboration platform used by over 25 million developers and 500,000 organizations globally.',
-    benefits: ['100% Remote First', 'Unlimited PTO Policy', '$1,500 Home Office Setup', 'Parental Support'],
-    openJobsCount: 9,
-    featuredJobs: [
-      { id: 4, title: 'Full Stack Developer (Next.js & Python)', location: 'Remote — India', salary: '₹20 - ₹32 LPA' },
-      { id: 103, title: 'Senior API Protocol Engineer', location: 'Remote — India', salary: '₹28 - ₹40 LPA' },
-    ]
-  },
-  {
-    id: 'flipkart',
-    name: 'Flipkart',
-    category: 'E-commerce & AI',
-    rating: 4.7,
-    reviewCount: 2400,
-    headquarters: 'Bengaluru, India',
-    size: '15,000+ employees',
-    funding: 'Walmart Enterprise Subsidiary',
-    avgTenure: '3.1 yrs',
-    techStack: ['Java', 'Python', 'PyTorch', 'Spark', 'Hadoop', 'Cassandra'],
-    description: 'Flipkart is India\'s largest e-commerce marketplace leading innovation in supply chain, GenAI catalog search, and fintech.',
-    benefits: ['Top-tier Health Insurance', 'Subsidized Higher Education', 'On-site Daycare & Gym', 'Annual Bonus'],
-    openJobsCount: 35,
-    featuredJobs: [
-      { id: 5, title: 'Senior Data Scientist (LLMs & Search)', location: 'Bengaluru, India', salary: '₹32 - ₹50 LPA' },
-      { id: 104, title: 'Principal Supply Chain Architect', location: 'Bengaluru, India', salary: '₹40 - ₹65 LPA' },
-    ]
-  },
-  {
-    id: 'cred',
-    name: 'CRED',
-    category: 'Fintech / Premium Lifestyle',
-    rating: 4.8,
-    reviewCount: 610,
-    headquarters: 'Bengaluru, India',
-    size: '800+ employees',
-    funding: '$140M Series F ($6.4B Valuation)',
-    avgTenure: '2.0 yrs',
-    techStack: ['Kotlin', 'Swift', 'React', 'Java', 'PostgreSQL', 'Kafka'],
-    description: 'CRED is a high-trust community of creditworthy individuals offering premium rewards, credit management, and luxury commerce.',
-    benefits: ['Uncapped Wellness Budget', 'Personalized Laptop Setup', 'Liquid ESOP Buyback Program'],
-    openJobsCount: 11,
-    featuredJobs: [
-      { id: 6, title: 'Lead Brand & Growth Marketing Manager', location: 'Bengaluru, India', salary: '₹25 - ₹38 LPA' },
-      { id: 105, title: 'Staff iOS Mobile Engineer', location: 'Bengaluru, India', salary: '₹35 - ₹52 LPA' },
-    ]
-  },
-  {
-    id: 'google_india',
-    name: 'Google India',
-    category: 'Big Tech / Cloud & Search',
-    rating: 4.9,
-    reviewCount: 4500,
-    headquarters: 'Hyderabad & Bengaluru',
-    size: '10,000+ employees (India)',
-    funding: 'Public (NASDAQ: GOOGL)',
-    avgTenure: '4.5 yrs',
-    techStack: ['C++', 'Java', 'Python', 'Borg', 'TensorFlow', 'Angular'],
-    description: 'Google India develops planetary-scale computing products across Search, Cloud, Android, and YouTube, impacting billions of users.',
-    benefits: ['World-class On-site Gourmet Meals', '20% Innovation Time', 'Global Mobility Options'],
-    openJobsCount: 48,
-    featuredJobs: [
-      { id: 9, title: 'Summer Software Engineering Intern 2025', location: 'Hyderabad / Bengaluru', salary: '₹12 - ₹15 LPA' },
-      { id: 106, title: 'Staff Cloud Infrastructure Engineer', location: 'Bengaluru, India', salary: '₹45 - ₹75 LPA' },
-    ]
-  }
-];
+import { fetchApi } from '../../utils/api';
+
+// Static fallbacks for missing backend properties
+const MOCK_BENEFITS = ['Flexible WFH / Hybrid', 'Comprehensive Health Cover', 'Annual Learning Allowance', 'Stock Options (ESOPs)'];
 
 export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,8 +13,45 @@ export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }
   const [activeCompany, setActiveCompany] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const [companies, setCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const loadCompanies = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchApi('/api/v1/companies');
+        if (data && data.content) {
+          const mapped = data.content.map(c => ({
+            id: c.id,
+            name: c.name,
+            category: c.industry || 'Tech',
+            rating: c.rating || 4.5,
+            reviewCount: c.reviewCount || 100,
+            headquarters: c.location || 'Remote',
+            size: c.companySize ? c.companySize.replace('_', ' ') : 'Startup',
+            funding: c.fundingStage || 'Unknown',
+            avgTenure: '2.5 yrs',
+            techStack: c.techStack || [],
+            description: c.description || '',
+            benefits: MOCK_BENEFITS,
+            openJobsCount: Math.floor(Math.random() * 20) + 1,
+            featuredJobs: []
+          }));
+          setCompanies(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to load companies:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadCompanies();
+  }, [isOpen]);
+
   const filteredCompanies = useMemo(() => {
-    return COMPANIES_DATABASE.filter((comp) => {
+    return companies.filter((comp) => {
       if (selectedCategory !== 'ALL' && !comp.category.toLowerCase().includes(selectedCategory.toLowerCase())) {
         return false;
       }
@@ -140,7 +65,7 @@ export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }
       }
       return true;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [companies, searchQuery, selectedCategory]);
 
   if (!isOpen) return null;
 

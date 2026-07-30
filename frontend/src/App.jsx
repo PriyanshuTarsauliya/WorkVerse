@@ -3,9 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase, Globe, Rss, Share, Mail, Sparkles, Sun, Moon, SearchX, RotateCcw,
   Building2, Award, Zap, CheckCircle2, ArrowRight, ShieldCheck, FileText, Cpu,
-  ChevronRight, Send, Users, TrendingUp, Check, Star
+  ChevronRight, ChevronDown, Send, Users, TrendingUp, Check, Star, Terminal
 } from 'lucide-react';
+import { AnimatedHero } from './components/hero/AnimatedHero';
 import { ToastProvider, useToast } from './components/Toast';
+import { ReactLenis } from 'lenis/react';
+import BubbleBackground from './components/ui/BubbleBackground';
 import JobFilterBar from './components/jobs/JobFilterBar';
 import JobsGrid from './components/jobs/JobCard';
 import JobDetailModal from './components/jobs/JobDetailModal';
@@ -234,10 +237,12 @@ const MOCK_WORKVERSE_JOBS = [
   }
 ];
 
+import { fetchApi } from './utils/api';
+
 function AppContent() {
   const toast = useToast();
-  const [jobs, setJobs] = useState(MOCK_WORKVERSE_JOBS);
-  const [visibleCount, setVisibleCount] = useState(JOBS_PER_PAGE);
+  const [jobs, setJobs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [candidateProfile, setCandidateProfile] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('workverse_candidate_profile')) || DEFAULT_CANDIDATE_PROFILE;
@@ -289,6 +294,8 @@ function AppContent() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isMarketDemandOpen, setIsMarketDemandOpen] = useState(false);
+  const [isExploreDropdownOpen, setIsExploreDropdownOpen] = useState(false);
+  const [isAiToolsDropdownOpen, setIsAiToolsDropdownOpen] = useState(false);
   const [showLocationBanner, setShowLocationBanner] = useState(true);
   const [userDetectedCity, setUserDetectedCity] = useState('');
   const [viewMode, setViewMode] = useState(() => {
@@ -311,69 +318,56 @@ function AppContent() {
   const [isLoadingJobs, setIsLoadingJobs] = useState(false);
 
   useEffect(() => {
-    const fetchLiveJobs = async () => {
+    const fetchBackendJobs = async () => {
       setIsLoadingJobs(true);
       try {
-        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
-        const res = await fetch(`${API_BASE_URL}/jobs/live`);
-        const data = await res.json();
-        
+        const data = await fetchApi('/api/v1/jobs');
         if (data && data.length > 0) {
-          const mappedJobs = data.map((job) => {
-            let daysAgo = 1;
-            if (job.publication_date) {
-               const pubDate = new Date(job.publication_date);
-               const diffTime = Math.abs(new Date() - pubDate);
-               daysAgo = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const mappedJobs = data.map((job) => ({
+            id: job.id,
+            title: job.title,
+            company: job.company,
+            companyLogo: null,
+            companyRating: 4.5,
+            companyReviewCount: 100,
+            location: job.location,
+            jobType: job.jobType,
+            category: job.category,
+            customSalaryString: job.salaryRange,
+            salaryMin: 100000,
+            salaryMax: 150000,
+            currency: 'INR',
+            description: job.description,
+            techStack: job.techStack || [],
+            experienceLevel: 'Entry/Mid Level',
+            experienceYears: '1-3',
+            remoteOnly: false,
+            isBookmarked: false,
+            applicationCount: 42,
+            postedDaysAgo: 1,
+            companyInsights: {
+              summary: 'Real Company • Active Hiring',
+              funding: 'Verified',
+              growth: 'Stable',
+              avgTenure: '2.5 yrs',
+              glassdoorRating: '4.5★',
+              culture: 'Collaborative',
+              salaryTransparency: job.salaryRange || 'Disclosed',
+              techMaturity: 'Modern'
             }
-            
-            return {
-              id: job.id,
-              title: job.title,
-              company: job.company_name,
-              companyLogo: job.company_logo,
-              companyRating: (Math.random() * (5.0 - 4.0) + 4.0).toFixed(1),
-              companyReviewCount: Math.floor(Math.random() * 500) + 50,
-              location: job.candidate_required_location || 'Remote',
-              jobType: job.job_type ? job.job_type.toUpperCase().replace('-', '_') : 'FULL_TIME',
-              category: job.category || 'Software',
-              customSalaryString: job.salary || 'Salary Undisclosed',
-              salaryMin: 100000, 
-              salaryMax: 150000, 
-              currency: 'USD',
-              description: job.description ? job.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Remote tech job',
-              techStack: job.tags ? job.tags.slice(0, 5) : ['Remote', 'Tech'],
-              experienceLevel: 'Mid/Senior Level',
-              experienceYears: '3-5',
-              remoteOnly: true,
-              isBookmarked: false,
-              applicationCount: Math.floor(Math.random() * 200) + 10,
-              postedDaysAgo: daysAgo,
-              applyUrl: job.url,
-              companyInsights: {
-                summary: 'Real Live Job from Remotive API • Globally Remote',
-                funding: 'Live Verified Company',
-                growth: 'Actively Hiring worldwide',
-                avgTenure: 'N/A',
-                glassdoorRating: '4.5★ (Est)',
-                culture: 'Remote-first, asynchronous culture.',
-                salaryTransparency: job.salary || 'Salary details available on application.',
-                techMaturity: 'Modern Tech Stack'
-              }
-            };
-          });
+          }));
           setJobs(mappedJobs);
         } else {
           setJobs(MOCK_WORKVERSE_JOBS);
         }
       } catch (err) {
-        console.error("Failed to fetch live jobs", err);
+        console.error("Failed to fetch backend jobs", err);
         setJobs(MOCK_WORKVERSE_JOBS);
       } finally {
         setIsLoadingJobs(false);
       }
     };
-    fetchLiveJobs();
+    fetchBackendJobs();
   }, []);
 
   useEffect(() => {
@@ -633,22 +627,21 @@ function AppContent() {
   }, [toast]);
 
   // Pagination: slice filtered jobs
-  const paginatedJobs = useMemo(() => filteredJobs.slice(0, visibleCount), [filteredJobs, visibleCount]);
-  const hasMore = visibleCount < filteredJobs.length;
+  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
+  const paginatedJobs = useMemo(() => {
+    const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+    return filteredJobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+  }, [filteredJobs, currentPage]);
+  const hasMore = currentPage < totalPages;
 
-  // Reset pagination when filters change
-  useEffect(() => { setVisibleCount(JOBS_PER_PAGE); }, [filters]);
+  // Reset to first page on filter change
+  useEffect(() => { setCurrentPage(1); }, [filters]);
 
   return (
     <div className="min-h-screen bg-main text-txtMain font-sans theme-transition relative overflow-x-hidden">
       {/* ── Page-Spanning Ambient Background Texture Layer ── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
-        {/* Slow Drifting Gradient Blobs */}
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-accent/10 blur-3xl animate-blob-slow-1" />
-        <div className="absolute top-1/3 -right-40 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl animate-blob-slow-2" />
-        <div className="absolute bottom-10 left-1/4 w-[30rem] h-[30rem] rounded-full bg-emerald-500/5 blur-3xl animate-blob-slow-1" />
-        {/* Subtle Dot Grid Overlay */}
-        <div className="absolute inset-0 bg-dot-grid opacity-30" />
+        <BubbleBackground interactive={false} />
       </div>
 
       {/* Relative Content Shell */}
@@ -675,73 +668,110 @@ function AppContent() {
               </span>
             </motion.div>
 
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center gap-1 font-medium text-xs text-txtMuted">
-              <button
-                onClick={() => handleResetFilters()}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                Browse Jobs
-              </button>
-              <button
-                onClick={() => setIsSalaryGuideOpen(true)}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                Salary Guide
-              </button>
-              <button
-                onClick={() => setIsCompaniesDirectoryOpen(true)}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                Companies
-              </button>
-              <button
-                onClick={() => setIsATSOpen(true)}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                ATS Pipeline
-              </button>
-              <button
-                onClick={() => setIsKYCOpen(true)}
-                className="px-3 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors font-semibold flex items-center gap-1"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" /> e-KYC
-              </button>
-              <button
-                onClick={() => setIsDPDPOpen(true)}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                DPDP Privacy
-              </button>
-              <button
-                onClick={() => setIsATSOpen(true)}
-                className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors"
-              >
-                Tools
-              </button>
-              <button
-                onClick={() => setIsMarketDemandOpen(true)}
-                className="px-3 py-1.5 rounded-lg text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors font-semibold flex items-center gap-1"
-              >
-                <TrendingUp className="w-3.5 h-3.5" /> Insights
-              </button>
-              <button
-                onClick={() => setIsAIMockInterviewOpen(true)}
-                data-testid="ai-voice-mock-interview-nav-button"
-                className="px-3.5 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all font-bold text-xs flex items-center gap-1.5 shadow-sm"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> AI Voice Mock Interview
-              </button>
-              <button
-                onClick={() => setIsPrepHubOpen(true)}
-                className="px-3 py-1.5 rounded-lg text-accent bg-accent/10 hover:bg-accent/20 transition-colors font-semibold flex items-center gap-1"
-              >
-                <Sparkles className="w-3.5 h-3.5" /> Prep & Tools
-              </button>
+            {/* Navigation Links - Condensed into 2 Dropdowns */}
+            <div className="hidden md:flex items-center gap-2 font-medium text-xs text-txtMuted">
+              {/* Explore Dropdown */}
+              <div className="relative" onMouseLeave={() => setIsExploreDropdownOpen(false)}>
+                <button
+                  onMouseEnter={() => setIsExploreDropdownOpen(true)}
+                  onClick={() => setIsExploreDropdownOpen(!isExploreDropdownOpen)}
+                  className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors flex items-center gap-1 font-semibold"
+                >
+                  <span>Explore</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+
+                {isExploreDropdownOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-48 bg-surface border border-borderStrong rounded-xl shadow-xl p-1.5 z-50 space-y-1">
+                    <button
+                      onClick={() => { handleResetFilters(); setIsExploreDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <Briefcase className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Browse Jobs</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsSalaryGuideOpen(true); setIsExploreDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Salary Guide 2025</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsCompaniesDirectoryOpen(true); setIsExploreDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Companies Directory</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsMarketDemandOpen(true); setIsExploreDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <Zap className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Market Insights</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* AI Tools Dropdown */}
+              <div className="relative" onMouseLeave={() => setIsAiToolsDropdownOpen(false)}>
+                <button
+                  onMouseEnter={() => setIsAiToolsDropdownOpen(true)}
+                  onClick={() => setIsAiToolsDropdownOpen(!isAiToolsDropdownOpen)}
+                  className="px-3 py-1.5 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-colors flex items-center gap-1.5 font-bold"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>AI Tools</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+
+                {isAiToolsDropdownOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-surface border border-borderStrong rounded-xl shadow-xl p-1.5 z-50 space-y-1">
+                    <button
+                      onClick={() => { setIsAIMockInterviewOpen(true); setIsAiToolsDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-emerald-400 hover:bg-emerald-500/10 transition-colors font-semibold flex items-center gap-2"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Voice Mock Interview</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsPrepHubOpen(true); setIsAiToolsDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Resume ATS Checker</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsCodingPlaygroundOpen(true); setIsAiToolsDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Coding Sandbox</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsHiringChallengesOpen(true); setIsAiToolsDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <Award className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Hiring Challenges</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsKYCOpen(true); setIsAiToolsDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>e-KYC Verification</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -798,205 +828,14 @@ function AppContent() {
           </div>
         </motion.header>
 
-        {/* ── Hero (Full-Bleed Outer + Centered Inner) ── */}
-        <section className="w-full border-b border-borderSubtle bg-gradient-to-b from-surface via-surface/90 to-main theme-transition relative overflow-hidden">
-          {/* Radial Glow Wash */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-radial-glow opacity-80 pointer-events-none" />
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 relative">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Content Column */}
-              <div className="lg:col-span-7 space-y-5">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Next-Gen AI Hiring & Career Platform</span>
-                </motion.div>
-
-                <motion.h1
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 }}
-                  data-testid="hero-heading"
-                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-txtMain leading-[1.15] tracking-tight"
-                >
-                  Find your next{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-indigo-400 to-emerald-400">
-                    dream career move
-                  </span>
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-txtMuted text-base sm:text-lg leading-relaxed max-w-2xl"
-                >
-                  Discover 10,000+ verified roles across Engineering, Product, Design & Finance with transparent <span className="text-emerald-400 font-semibold">₹ LPA</span> packages, AI resume parsing, and voice mock interview prep.
-                </motion.p>
-
-                {/* Quick CTA Action Row */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="flex flex-wrap items-center gap-3 pt-2"
-                >
-                  <button
-                    onClick={() => handleResetFilters()}
-                    className="px-6 py-3 text-xs font-bold text-white bg-accent hover:bg-accent/90 rounded-xl shadow-lg shadow-accent/20 transition-all flex items-center gap-2"
-                  >
-                    <SearchX className="w-4 h-4" /> Explore 10k+ Openings
-                  </button>
-
-                  <button
-                    onClick={() => setIsAIMockInterviewOpen(true)}
-                    data-testid="hero-ai-voice-mock-interview-button"
-                    className="px-5 py-3 text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
-                  >
-                    <Sparkles className="w-4 h-4 fill-white animate-pulse" /> 🎙️ AI Voice Mock Interview
-                  </button>
-
-                  <button
-                    onClick={() => setIsPrepHubOpen(true)}
-                    className="px-5 py-3 text-xs font-bold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-xl transition-all flex items-center gap-2"
-                  >
-                    <Sparkles className="w-4 h-4 text-accent" /> AI Interview Studio
-                  </button>
-
-                  <button
-                    onClick={() => setIsMarketDemandOpen(true)}
-                    className="px-5 py-3 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-2"
-                  >
-                    <TrendingUp className="w-4 h-4" /> Market Demand
-                  </button>
-
-                  <button
-                    onClick={() => setIsResumeBuilderOpen(true)}
-                    className="px-5 py-3 text-xs font-bold text-txtMain bg-nested hover:bg-surface border border-borderSubtle rounded-xl transition-all hidden sm:flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4 text-emerald-400" /> Resume ATS Checker
-                  </button>
-                </motion.div>
-              </div>
-
-              {/* Right Visual Column (Hero Visual Artwork & Floating Stat Badges) */}
-              <div className="lg:col-span-5 relative flex items-center justify-center">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="relative w-full max-w-md bg-nested/60 border border-borderStrong/60 rounded-3xl p-6 shadow-2xl backdrop-blur-sm space-y-5"
-                >
-                  {/* SVG Visual Graphic Container */}
-                  <div className="flex items-center justify-between border-b border-borderSubtle pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-accent to-emerald-400 flex items-center justify-center text-white font-bold shadow-md">
-                        <Cpu className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-txtMain">AI Matching Engine</p>
-                        <p className="text-[11px] text-txtMuted">Live Candidate Vector Score</p>
-                      </div>
-                    </div>
-                    <span className="px-2.5 py-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                      98.4% Match Accuracy
-                    </span>
-                  </div>
-
-                  {/* SVG Abstract Graphic */}
-                  <div className="relative py-2">
-                    <svg className="w-full h-24 stroke-accent/40 fill-none" viewBox="0 0 300 80">
-                      <path d="M 10 70 Q 75 10, 150 40 T 290 20" strokeWidth="3" strokeDasharray="6 4" />
-                      <circle cx="75" cy="30" r="5" className="fill-accent animate-pulse" />
-                      <circle cx="150" cy="40" r="5" className="fill-emerald-400 animate-pulse" />
-                      <circle cx="230" cy="25" r="5" className="fill-indigo-400 animate-pulse" />
-                    </svg>
-                  </div>
-
-                  {/* Floating Stat Chip 1 */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-surface border border-borderSubtle rounded-xl p-3 shadow-md flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                      <Building2 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-txtMain">500+ Top Tech Enterprises</p>
-                      <p className="text-[10px] text-txtMuted">Hiring actively across India & Remote</p>
-                    </div>
-                  </motion.div>
-
-                  {/* Floating Stat Chip 2 */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-surface border border-borderSubtle rounded-xl p-3 shadow-md flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
-                      <Users className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-txtMain">50,000+ Verified Hires</p>
-                      <p className="text-[10px] text-txtMuted">Placed in 2024-2025 tech drives</p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Section: Trusted-By Partner Logo Strip (Full Bleed) ── */}
-        <section className="w-full bg-surface/70 border-b border-borderSubtle py-5 overflow-hidden relative">
-          <div className="max-w-7xl mx-auto px-4 mb-3 text-center">
-            <p className="text-[11px] font-bold text-txtMuted uppercase tracking-widest">
-              Hiring Now at Top Tech Enterprises & High-Growth Unicorns
-            </p>
-          </div>
-          <div className="flex w-max space-x-8 animate-ticker">
-            {[
-              'Razorpay', 'Swiggy', 'Postman', 'Flipkart', 'CRED', 'HDFC Bank', 'Atlassian', 'Google India', 'Uber', 'Unacademy',
-              'Razorpay', 'Swiggy', 'Postman', 'Flipkart', 'CRED', 'HDFC Bank', 'Atlassian', 'Google India', 'Uber', 'Unacademy',
-            ].map((comp, idx) => (
-              <div key={idx} className="flex items-center gap-2 bg-nested/50 border border-borderSubtle px-4 py-2 rounded-xl text-xs font-bold text-txtMain shadow-sm shrink-0">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                {comp}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Section: Live Platform Stats Bar (Full Bleed) ── */}
-        <section className="w-full bg-gradient-to-r from-accent/10 via-surface to-indigo-500/10 border-b border-borderSubtle py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
-              <div className="bg-nested/60 border border-borderSubtle p-4 rounded-2xl">
-                <p className="text-2xl sm:text-3xl font-extrabold text-accent">10,000+</p>
-                <p className="text-xs text-txtMuted mt-1 font-medium">Verified Active Roles</p>
-              </div>
-              <div className="bg-nested/60 border border-borderSubtle p-4 rounded-2xl">
-                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400">500+</p>
-                <p className="text-xs text-txtMuted mt-1 font-medium">Hiring Partner Companies</p>
-              </div>
-              <div className="bg-nested/60 border border-borderSubtle p-4 rounded-2xl">
-                <p className="text-2xl sm:text-3xl font-extrabold text-indigo-400">50,000+</p>
-                <p className="text-xs text-txtMuted mt-1 font-medium">Candidates Placed</p>
-              </div>
-              <div className="bg-nested/60 border border-borderSubtle p-4 rounded-2xl">
-                <p className="text-2xl sm:text-3xl font-extrabold text-amber-400">98.4%</p>
-                <p className="text-xs text-txtMuted mt-1 font-medium">AI Match Precision Score</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* ── Signature AnimatedHero Section ── */}
+        <AnimatedHero
+          onExploreClick={() => {
+            const section = document.getElementById('jobs');
+            if (section) section.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onPrepClick={() => setIsAIMockInterviewOpen(true)}
+        />
 
         {/* ── Section: How WorkVerse Works (Full Bleed) ── */}
         <section className="w-full bg-surface/50 border-b border-borderSubtle py-12 relative">
@@ -1010,9 +849,9 @@ function AppContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-accent/40 transition-all shadow-sm">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent font-bold flex items-center justify-center border border-accent/20">
-                  01
+              <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-amber-500/40 transition-all shadow-sm">
+                <div className="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-500 font-mono text-xs font-bold w-max border border-amber-500/20">
+                  STEP 01 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">Create & Parse Profile</h3>
                 <p className="text-xs text-txtMuted leading-relaxed">
@@ -1021,8 +860,8 @@ function AppContent() {
               </div>
 
               <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-emerald-500/40 transition-all shadow-sm">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 font-bold flex items-center justify-center border border-emerald-500/20">
-                  02
+                <div className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold w-max border border-emerald-500/20">
+                  STEP 02 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">AI Voice Practice & Coding</h3>
                 <p className="text-xs text-txtMuted leading-relaxed">
@@ -1031,8 +870,8 @@ function AppContent() {
               </div>
 
               <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-indigo-500/40 transition-all shadow-sm">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/20">
-                  03
+                <div className="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 font-mono text-xs font-bold w-max border border-indigo-500/20">
+                  STEP 03 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">Apply & Track Status</h3>
                 <p className="text-xs text-txtMuted leading-relaxed">
@@ -1114,17 +953,43 @@ function AppContent() {
                     isPremium={isPremium}
                     onUpgradeClick={() => setIsPremiumModalOpen(true)}
                   />
-                  {/* Load More */}
-                  {hasMore && (
-                    <div className="flex justify-center pt-4">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setVisibleCount((v) => v + JOBS_PER_PAGE)}
-                        className="px-6 py-2.5 text-sm font-semibold text-txtMain bg-nested border border-borderSubtle rounded-xl hover:border-accent/40 transition-colors"
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 pt-6">
+                      <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 rounded-lg border border-borderSubtle bg-surface text-txtMuted hover:text-txtMain disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Load More ({filteredJobs.length - visibleCount} remaining)
-                      </motion.button>
+                        Prev
+                      </button>
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: totalPages }).map((_, idx) => {
+                          const pageNumber = idx + 1;
+                          return (
+                            <button
+                              key={pageNumber}
+                              onClick={() => setCurrentPage(pageNumber)}
+                              className={`w-8 h-8 rounded-lg text-sm font-semibold flex items-center justify-center transition-colors ${
+                                currentPage === pageNumber
+                                  ? 'bg-accent text-white shadow-sm'
+                                  : 'bg-surface border border-borderSubtle text-txtMuted hover:border-accent/40 hover:text-txtMain'
+                              }`}
+                            >
+                              {pageNumber}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1.5 rounded-lg border border-borderSubtle bg-surface text-txtMuted hover:text-txtMain disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
                     </div>
                   )}
                 </>
@@ -1137,19 +1002,19 @@ function AppContent() {
         <footer className="w-full border-t border-borderSubtle bg-surface theme-transition pt-14 pb-8 mt-16 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             {/* Top Job Alert Email Banner */}
-            <div className="bg-gradient-to-r from-accent/15 via-nested to-indigo-500/15 border border-borderStrong rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="bg-surface border border-borderStrong rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
               <div className="space-y-1 text-center md:text-left">
-                <h3 className="text-lg font-bold text-txtMain tracking-tight">Stay Ahead of Top Engineering & Tech Hiring Drops</h3>
-                <p className="text-xs text-txtMuted">Get weekly curated job matches tailored directly to your profile skills.</p>
+                <h3 className="text-lg font-bold text-txtMain tracking-tight">Stay Ahead of Top Engineering & Tech Drops</h3>
+                <p className="text-xs text-txtMuted font-mono">Curated skill-gap vector drops delivered directly to your inbox.</p>
               </div>
 
               <div className="flex items-center gap-2 w-full md:w-auto max-w-md">
                 <input
                   type="email"
-                  placeholder="Enter your email address..."
-                  className="w-full bg-main border border-borderStrong focus:border-accent rounded-xl px-4 py-2.5 text-xs text-txtMain outline-none"
+                  placeholder="dev@workverse.ai █"
+                  className="w-full bg-canvas border border-borderStrong focus:border-amber-500 rounded-xl px-4 py-2.5 text-xs text-txtMain font-mono outline-none"
                 />
-                <button className="px-5 py-2.5 text-xs font-bold text-white bg-accent hover:bg-accent/90 rounded-xl whitespace-nowrap shadow-md flex items-center gap-1.5 shrink-0">
+                <button className="px-5 py-2.5 text-xs font-bold text-black bg-amber-500 hover:bg-amber-600 rounded-xl whitespace-nowrap shadow-md flex items-center gap-1.5 shrink-0 transition-colors">
                   <Send className="w-3.5 h-3.5" /> Subscribe
                 </button>
               </div>
@@ -1310,6 +1175,7 @@ function AppContent() {
         isOpen={isMarketDemandOpen}
         onClose={() => setIsMarketDemandOpen(false)}
       />
+      
       <AIChatbotWidget />
     </div>
   );
@@ -1317,8 +1183,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
+    <ReactLenis root>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </ReactLenis>
   );
 }

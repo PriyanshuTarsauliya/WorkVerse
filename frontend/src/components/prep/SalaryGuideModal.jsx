@@ -2,7 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, DollarSign, TrendingUp, Award, MapPin, Briefcase, Zap, Building2, HelpCircle, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
 
-const SALARY_DATA = {
+import { fetchApi } from '../../utils/api';
+
+const DEFAULT_SALARY_DATA = {
   'frontend': {
     title: 'Frontend Engineer',
     base: { entry: 1200000, mid: 2200000, senior: 3500000, lead: 5200000 },
@@ -10,83 +12,8 @@ const SALARY_DATA = {
     skillsAddons: [
       { name: 'Next.js & Server Components', boost: '+18%' },
       { name: 'TypeScript Mastery', boost: '+15%' },
-      { name: 'Web Performance & Micro-frontends', boost: '+22%' },
-      { name: 'Three.js / Canvas 3D Graphics', boost: '+25%' },
     ],
-    topCompanies: [
-      { name: 'Razorpay', median: '₹32.5 LPA', rating: '4.8★' },
-      { name: 'CRED', median: '₹35.0 LPA', rating: '4.8★' },
-      { name: 'Postman', median: '₹30.0 LPA', rating: '4.9★' },
-      { name: 'Google India', median: '₹42.0 LPA', rating: '4.9★' },
-    ]
-  },
-  'backend': {
-    title: 'Backend Engineer',
-    base: { entry: 1400000, mid: 2500000, senior: 3800000, lead: 5800000 },
-    percentiles: { p25: 2000000, median: 2800000, p75: 4200000, p90: 6200000 },
-    skillsAddons: [
-      { name: 'Distributed Systems & Microservices', boost: '+25%' },
-      { name: 'Kafka & High-Throughput Pipelines', boost: '+20%' },
-      { name: 'Go / Rust Performance Engine', boost: '+28%' },
-      { name: 'Kubernetes & Infrastructure-as-Code', boost: '+18%' },
-    ],
-    topCompanies: [
-      { name: 'Swiggy', median: '₹34.0 LPA', rating: '4.6★' },
-      { name: 'Goldman Sachs', median: '₹36.0 LPA', rating: '4.3★' },
-      { name: 'Uber India', median: '₹45.0 LPA', rating: '4.7★' },
-      { name: 'Razorpay', median: '₹33.0 LPA', rating: '4.8★' },
-    ]
-  },
-  'fullstack': {
-    title: 'Full Stack Engineer',
-    base: { entry: 1300000, mid: 2400000, senior: 3600000, lead: 5500000 },
-    percentiles: { p25: 1900000, median: 2700000, p75: 4000000, p90: 5800000 },
-    skillsAddons: [
-      { name: 'React + Python/FastAPI', boost: '+22%' },
-      { name: 'Cloud Native (AWS/GCP)', boost: '+18%' },
-      { name: 'GraphQL & Apollo Server', boost: '+15%' },
-      { name: 'System Architecture Design', boost: '+30%' },
-    ],
-    topCompanies: [
-      { name: 'Flipkart', median: '₹35.0 LPA', rating: '4.7★' },
-      { name: 'Postman', median: '₹32.0 LPA', rating: '4.9★' },
-      { name: 'Atlassian', median: '₹40.0 LPA', rating: '4.8★' },
-      { name: 'Zomato', median: '₹30.0 LPA', rating: '4.5★' },
-    ]
-  },
-  'ai_ml': {
-    title: 'AI / ML Engineer & Data Scientist',
-    base: { entry: 1600000, mid: 3000000, senior: 4500000, lead: 7000000 },
-    percentiles: { p25: 2400000, median: 3500000, p75: 5200000, p90: 7800000 },
-    skillsAddons: [
-      { name: 'LLM Fine-Tuning & RAG Pipelines', boost: '+35%' },
-      { name: 'PyTorch / Distributed Training', boost: '+28%' },
-      { name: 'Vector DBs (Pinecone, Qdrant)', boost: '+22%' },
-      { name: 'MLOps & Ray/Spark Clusters', boost: '+25%' },
-    ],
-    topCompanies: [
-      { name: 'Google Research', median: '₹55.0 LPA', rating: '4.9★' },
-      { name: 'Flipkart AI Lab', median: '₹42.0 LPA', rating: '4.7★' },
-      { name: 'Microsoft IDC', median: '₹48.0 LPA', rating: '4.8★' },
-      { name: 'Fractal Analytics', median: '₹32.0 LPA', rating: '4.4★' },
-    ]
-  },
-  'product': {
-    title: 'Product Manager',
-    base: { entry: 1500000, mid: 2800000, senior: 4200000, lead: 6500000 },
-    percentiles: { p25: 2200000, median: 3200000, p75: 4800000, p90: 7200000 },
-    skillsAddons: [
-      { name: 'Growth & Retention Funnels', boost: '+25%' },
-      { name: 'SQL & Advanced Product Analytics', boost: '+18%' },
-      { name: 'Technical PM (APIs & Cloud)', boost: '+30%' },
-      { name: 'A/B Experimentation Frameworks', boost: '+20%' },
-    ],
-    topCompanies: [
-      { name: 'Swiggy', median: '₹38.0 LPA', rating: '4.6★' },
-      { name: 'Razorpay', median: '₹36.0 LPA', rating: '4.8★' },
-      { name: 'CRED', median: '₹42.0 LPA', rating: '4.8★' },
-      { name: 'MakeMyTrip', median: '₹32.0 LPA', rating: '4.3★' },
-    ]
+    topCompanies: []
   }
 };
 
@@ -100,6 +27,7 @@ const LOCATION_MULTIPLIERS = {
 };
 
 export default function SalaryGuideModal({ isOpen, onClose }) {
+  const [salaryData, setSalaryData] = useState(DEFAULT_SALARY_DATA);
   const [selectedRoleKey, setSelectedRoleKey] = useState('frontend');
   const [selectedLocationKey, setSelectedLocationKey] = useState('bengaluru');
   const [selectedExpLevel, setSelectedExpLevel] = useState('mid');
@@ -107,7 +35,52 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [demandData, setDemandData] = useState(null);
 
-  const currentRole = SALARY_DATA[selectedRoleKey] || SALARY_DATA['frontend'];
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchSalaries = async () => {
+      try {
+        const data = await fetchApi('/api/v1/salary-guide');
+        if (data && data.length > 0) {
+          const newSalaryData = {};
+          
+          data.forEach(s => {
+            const roleKey = s.role.toLowerCase().replace(/[\s\/]+/g, '_');
+            if (!newSalaryData[roleKey]) {
+              newSalaryData[roleKey] = {
+                title: s.role,
+                base: { entry: 0, mid: 0, senior: 0, lead: 0 },
+                percentiles: { p25: 0, median: 0, p75: 0, p90: 0 },
+                skillsAddons: [],
+                topCompanies: []
+              };
+            }
+            
+            const expKey = s.experienceLevel ? s.experienceLevel.toLowerCase().split(' ')[0] : 'mid';
+            const avgSalary = (s.salaryMin + s.salaryMax) / 2;
+            
+            if (['entry', 'mid', 'senior', 'lead'].includes(expKey)) {
+              newSalaryData[roleKey].base[expKey] = avgSalary;
+            }
+            // Just populate median for simplicity
+            newSalaryData[roleKey].percentiles.median = avgSalary;
+            newSalaryData[roleKey].percentiles.p25 = avgSalary * 0.8;
+            newSalaryData[roleKey].percentiles.p75 = avgSalary * 1.2;
+            newSalaryData[roleKey].percentiles.p90 = avgSalary * 1.5;
+          });
+          
+          if (Object.keys(newSalaryData).length > 0) {
+            setSalaryData(newSalaryData);
+            setSelectedRoleKey(Object.keys(newSalaryData)[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load salaries:', err);
+      }
+    };
+    fetchSalaries();
+  }, [isOpen]);
+
+  const currentRole = salaryData[selectedRoleKey] || salaryData[Object.keys(salaryData)[0]] || DEFAULT_SALARY_DATA['frontend'];
   const locationObj = LOCATION_MULTIPLIERS[selectedLocationKey] || LOCATION_MULTIPLIERS['bengaluru'];
 
   useEffect(() => {
@@ -118,7 +91,7 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
         .then(data => setDemandData(data))
         .catch(err => console.error(err));
     }
-  }, [isOpen, selectedRoleKey, selectedLocationKey]);
+  }, [isOpen, selectedRoleKey, selectedLocationKey, currentRole.title]);
 
   const calculatedBaseSalary = useMemo(() => {
     const rawInr = currentRole.base[selectedExpLevel] * locationObj.factor;
@@ -202,7 +175,7 @@ export default function SalaryGuideModal({ isOpen, onClose }) {
                 onChange={(e) => setSelectedRoleKey(e.target.value)}
                 className="w-full bg-main border border-borderStrong focus:border-accent rounded-xl px-3 py-2 text-xs text-txtMain font-medium outline-none cursor-pointer"
               >
-                {Object.entries(SALARY_DATA).map(([key, item]) => (
+                {Object.entries(salaryData).map(([key, item]) => (
                   <option key={key} value={key}>{item.title}</option>
                 ))}
               </select>

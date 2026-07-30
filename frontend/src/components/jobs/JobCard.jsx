@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, DollarSign, Clock, Users, Star, Share2, Zap, TrendingUp, Bookmark, Sparkles, IndianRupee, CheckCircle
 } from 'lucide-react';
+import SpotlightCard from '../ui/SpotlightCard';
 
 const formatSalaryRupees = (min, max) => {
   const minLakhs = (min / 100000).toFixed(min % 100000 === 0 ? 0 : 1);
@@ -86,29 +87,46 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
       onClick={() => onApply(job)}
       data-testid={`job-card-${job.id}`}
-      className={`group relative bg-surface border rounded-xl p-5 cursor-pointer theme-transition shadow-sm hover:shadow-md ${
+      className={`group relative rounded-xl cursor-pointer theme-transition shadow-sm hover:shadow-md ${
         isTopRecommended
           ? 'border-accent/40 bg-accent/5 dark:bg-accent/10'
           : 'border-borderSubtle hover:border-borderStrong'
       }`}
     >
+      <SpotlightCard className="h-full p-5 flex flex-col justify-between rounded-xl">
       {/* Top Recommendation Badge */}
       {isTopRecommended && (
-        <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent text-white shadow-lg flex items-center gap-1">
+        <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent text-white shadow-lg flex items-center gap-1 z-20">
           <Sparkles className="w-3 h-3 fill-white animate-pulse-subtle" />
           Top Recommendation
         </div>
       )}
 
-      <div className="flex flex-col h-full justify-between">
+      <div className="flex flex-col h-full justify-between relative z-10">
         {/* Header row */}
         <div>
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-start gap-3">
-              {/* Company logo */}
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md`}>
-                {(job.company || 'W').charAt(0)}
-              </div>
+              {job.companyLogo ? (
+                <div className="w-10 h-10 rounded-lg bg-white shrink-0 shadow-md flex items-center justify-center border border-borderSubtle overflow-hidden relative">
+                  <img 
+                    src={job.companyLogo} 
+                    alt={job.company} 
+                    className="w-full h-full object-contain p-1" 
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }} 
+                  />
+                  <div className={`hidden absolute inset-0 bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} items-center justify-center text-white text-sm font-bold w-full h-full`}>
+                    {(job.company || 'W').charAt(0)}
+                  </div>
+                </div>
+              ) : (
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md`}>
+                  {(job.company || 'W').charAt(0)}
+                </div>
+              )}
               <div className="min-w-0">
                 <h3 className="text-[15px] font-semibold text-txtMain leading-snug group-hover:text-accent transition-colors line-clamp-2" data-testid={`job-title-${job.id}`}>
                   {job.title}
@@ -165,18 +183,12 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
           {/* Badges row */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             {matchScore != null && (
-              <span className={`flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold rounded-md border ${
-                matchScore >= 80
-                  ? 'bg-success-bg border-success/30 text-success'
-                  : matchScore >= 60
-                  ? 'bg-accent/15 border-accent/30 text-accent'
-                  : 'bg-amber-500/15 border-amber-500/30 text-amber-500'
-              }`}>
+              <span className="flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-500 shadow-sm">
                 <TrendingUp className="w-3 h-3" />
                 {matchScore}% Match
               </span>
             )}
-            <span className="px-2 py-0.5 text-xs font-semibold text-accent bg-accent/15 border border-accent/30 rounded-md">
+            <span className="px-2 py-0.5 text-xs font-semibold text-txtMain bg-nested border border-borderStrong rounded-md">
               {(job.jobType || 'FULL_TIME').replace('_', ' ')}
             </span>
             {job.experienceYears && (
@@ -192,8 +204,8 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
 
           {/* Company Insight Snippet */}
           {job.companyInsights?.summary && (
-            <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-accent/5 border border-accent/20 text-[11px] font-medium text-txtMuted flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-accent shrink-0" />
+            <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-amber-500/5 border border-amber-500/20 text-[11px] font-medium text-txtMuted flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
               <span className="truncate">{job.companyInsights.summary}</span>
             </div>
           )}
@@ -203,82 +215,90 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
             {job.description}
           </p>
 
-          {/* Tech Stack Pills */}
+          {/* Tech Stack Skill Diff Chips */}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {(job.techStack || []).map((tech, i) => (
+            {(job.techStack || []).slice(0, 4).map((tech, i) => (
               <span
                 key={i}
-                className="px-2 py-0.5 text-xs font-medium text-txtMuted bg-nested border border-borderStrong rounded-md"
+                className="px-2 py-0.5 text-xs font-mono font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-md flex items-center gap-0.5"
               >
-                {tech}
+                <span className="text-emerald-400 font-bold">+</span> {tech}
+              </span>
+            ))}
+            {(job.gapSkills || ['Kubernetes']).slice(0, 1).map((gap, i) => (
+              <span
+                key={`gap-${i}`}
+                className="px-2 py-0.5 text-xs font-mono font-medium text-txtMuted bg-transparent border border-dashed border-borderStrong rounded-md flex items-center gap-0.5 opacity-80"
+              >
+                <span className="text-txtMuted font-bold">–</span> {gap}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Footer row */}
-        <div className="pt-3 border-t border-borderSubtle flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Competition Badge */}
+        {/* Footer */}
+        <div className="pt-3 border-t border-borderSubtle space-y-3">
+          {/* Row 1: Competition badge + Share */}
+          <div className="flex items-center justify-between">
             {(job.applicationCount || 0) < 10 ? (
-              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
                 🚀 First 10 applicants!
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
-                🔥 {job.applicationCount} applied recently
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+                🔥 {job.applicationCount} applied
               </span>
             )}
-          </div>
 
-          <div className="flex items-center gap-2">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => { e.stopPropagation(); onShareJob?.(job); }}
-              className="w-8 h-8 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-txtMuted hover:text-txtMain transition-colors"
+              className="w-7 h-7 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-txtMuted hover:text-txtMain transition-colors cursor-pointer"
               title="Share this job"
             >
               <Share2 className="w-3.5 h-3.5" />
             </motion.button>
-
-            {hasApplied ? (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-700/50 dark:text-emerald-300 rounded-lg" data-testid={`applied-badge-${job.id}`}>
-                <CheckCircle className="w-3.5 h-3.5" />
-                Applied
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    if (job.applyUrl) window.open(job.applyUrl, '_blank');
-                    else onApply(job, true); 
-                  }}
-                  data-testid={`quick-apply-button-${job.id}`}
-                  className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-lg transition-all duration-150 shadow-sm flex items-center gap-1"
-                  title="Apply instantly with 1 click using saved resume & profile"
-                >
-                  <Zap className="w-3.5 h-3.5 fill-white text-white animate-pulse" />
-                  Quick Apply
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={(e) => { e.stopPropagation(); onApply(job, false); }}
-                  data-testid={`view-details-button-${job.id}`}
-                  className="px-2.5 py-1.5 text-xs font-semibold text-txtMain bg-nested hover:bg-borderSubtle border border-borderStrong rounded-lg transition-all duration-150"
-                >
-                  Details
-                </motion.button>
-              </div>
-            )}
           </div>
+
+          {/* Row 2: Action buttons — full width */}
+          {hasApplied ? (
+            <div className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 rounded-lg" data-testid={`applied-badge-${job.id}`}>
+              <CheckCircle className="w-3.5 h-3.5" />
+              Applied
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  if (job.applyUrl) window.open(job.applyUrl, '_blank');
+                  else onApply(job, true); 
+                }}
+                data-testid={`quick-apply-button-${job.id}`}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-black bg-amber-500 hover:bg-amber-600 rounded-lg transition-all shadow-sm shadow-amber-500/20 cursor-pointer"
+                title="Apply instantly with saved resume"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                Quick Apply
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={(e) => { e.stopPropagation(); onApply(job, false); }}
+                data-testid={`view-details-button-${job.id}`}
+                className="flex-1 inline-flex items-center justify-center py-2 text-xs font-semibold text-txtMain bg-nested hover:bg-borderSubtle border border-borderStrong rounded-lg transition-all cursor-pointer"
+              >
+                View Details
+              </motion.button>
+            </div>
+          )}
         </div>
       </div>
+      </SpotlightCard>
     </motion.div>
   );
 }

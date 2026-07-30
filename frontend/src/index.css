@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,43 +6,57 @@
 
 @layer base {
   :root, html.dark {
-    --bg-main: #0F1117;
-    --bg-surface: #13151D;
-    --bg-surface-nested: #181A24;
-    --border-subtle: #282B3A;
-    --border-strong: #3C4054;
-    --text-main: #E8E9EE;
-    --text-muted: #9498A8;
-    --brand-accent: #8174F6;
-    --brand-accent-gradient: #6366F1;
-    --color-success: #34D399;
-    --color-success-bg: #142D28;
+    --canvas: #0A0F0D;
+    --panel: #121815;
+    --diff-add: #4ADE80;
+    --diff-gap: #6B7280;
+    --signal: #E8A33D;
+    --paper: #F2F0EA;
+
+    --bg-main: #0A0F0D;
+    --bg-surface: #121815;
+    --bg-surface-nested: #18201C;
+    --border-subtle: #212C26;
+    --border-strong: #32423A;
+    --text-main: #F2F0EA;
+    --text-muted: #8E9993;
+    --brand-accent: #E8A33D;
+    --brand-accent-gradient: #D99026;
+    --color-success: #4ADE80;
+    --color-success-bg: #12281D;
 
     --shimmer-from: rgba(255, 255, 255, 0);
     --shimmer-via: rgba(255, 255, 255, 0.05);
     --shimmer-to: rgba(255, 255, 255, 0);
 
-    --glow-hero: radial-gradient(circle at 50% 0%, rgba(129, 116, 246, 0.18) 0%, rgba(99, 102, 241, 0.06) 50%, transparent 80%);
+    --glow-hero: radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.08) 0%, rgba(232, 163, 61, 0.04) 50%, transparent 80%);
   }
 
   html.light {
-    --bg-main: #F8F9FD;
+    --canvas: #F5F4EE;
+    --panel: #FFFFFF;
+    --diff-add: #16A34A;
+    --diff-gap: #6B7280;
+    --signal: #D97706;
+    --paper: #111827;
+
+    --bg-main: #F5F4EE;
     --bg-surface: #FFFFFF;
-    --bg-surface-nested: #F0F2F8;
-    --border-subtle: #E2E5F0;
-    --border-strong: #D1D5E5;
-    --text-main: #0F172A;
+    --bg-surface-nested: #EBE9E1;
+    --border-subtle: #E2E0D5;
+    --border-strong: #CBD5E1;
+    --text-main: #111827;
     --text-muted: #64748B;
-    --brand-accent: #6366F1;
-    --brand-accent-gradient: #4F46E5;
-    --color-success: #10B981;
-    --color-success-bg: #D1FAE5;
+    --brand-accent: #D97706;
+    --brand-accent-gradient: #B45309;
+    --color-success: #16A34A;
+    --color-success-bg: #DCFCE7;
 
     --shimmer-from: rgba(0, 0, 0, 0);
     --shimmer-via: rgba(0, 0, 0, 0.04);
     --shimmer-to: rgba(0, 0, 0, 0);
 
-    --glow-hero: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, rgba(79, 70, 229, 0.03) 50%, transparent 80%);
+    --glow-hero: radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.08) 0%, rgba(22, 163, 74, 0.03) 50%, transparent 80%);
   }
 
   body {
