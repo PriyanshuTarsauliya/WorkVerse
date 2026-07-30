@@ -112,8 +112,8 @@ export default function JobFilterBar({
           <div className="w-px bg-borderSubtle my-1.5 shrink-0" />
 
           {/* Location Search */}
-          <div className="relative w-24 sm:w-44 shrink-0">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-txtMuted pointer-events-none" />
+          <div className="relative w-28 sm:w-44 shrink-0">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txtMuted pointer-events-none" />
             <input
               type="text"
               data-testid="location-input"
@@ -123,7 +123,7 @@ export default function JobFilterBar({
                 if (e.key === 'Enter' && filters.location) saveRecentSearch(filters.location);
               }}
               placeholder="City or Remote"
-              className="w-full bg-transparent pl-8 pr-2 py-2 text-sm text-txtMain placeholder-txtMuted focus:outline-none rounded-r-lg"
+              className="w-full bg-transparent pl-9 pr-2 py-2 text-sm text-txtMain placeholder-txtMuted focus:outline-none rounded-r-lg"
             />
           </div>
 
@@ -131,7 +131,7 @@ export default function JobFilterBar({
           {(filters.search || filters.location) && (
             <button
               onClick={() => onFilterChange({ ...filters, search: '', location: '' })}
-              className="px-2 flex items-center text-txtMuted hover:text-txtMain shrink-0"
+              className="px-2.5 min-w-[32px] flex items-center justify-center text-txtMuted hover:text-txtMain shrink-0 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>

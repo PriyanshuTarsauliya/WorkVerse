@@ -279,7 +279,7 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={(e) => { e.stopPropagation(); onShareJob?.(job); }}
-              className="w-7 h-7 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               title="Share this job"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -288,7 +288,7 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
 
           {/* Row 2: Action buttons — full width */}
           {hasApplied ? (
-            <div className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 rounded-lg" data-testid={`applied-badge-${job.id}`}>
+            <div className="flex items-center justify-center gap-1.5 w-full py-2.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 rounded-lg" data-testid={`applied-badge-${job.id}`}>
               <CheckCircle className="w-3.5 h-3.5" />
               Applied
             </div>
@@ -316,7 +316,7 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
                 whileTap={{ scale: 0.97 }}
                 onClick={(e) => { e.stopPropagation(); onApply(job, false); }}
                 data-testid={`view-details-button-${job.id}`}
-                className="flex-1 inline-flex items-center justify-center py-2 text-xs font-semibold text-txtMain bg-nested hover:bg-borderSubtle border border-borderStrong rounded-lg transition-all cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center py-2.5 text-xs font-bold text-txtMain bg-nested hover:bg-borderSubtle border border-borderStrong rounded-lg transition-all cursor-pointer"
               >
                 View Details
               </motion.button>

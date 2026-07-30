@@ -110,7 +110,7 @@ export function AnimatedHero({ onExploreClick, onPrepClick }) {
                 whileHover={{ scale: 1.05, backgroundColor: "rgba(99,102,241,0.1)" }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onPrepClick}
-                className="px-6 py-3.5 rounded-xl font-semibold text-sm bg-surface hover:bg-surface-nested text-txtMain border border-borderStrong transition-all cursor-pointer flex items-center gap-2 shadow-sm"
+                className="px-6 py-3.5 rounded-xl font-bold text-sm bg-surface hover:bg-surface-nested text-txtMain border border-borderStrong transition-all cursor-pointer flex items-center gap-2 shadow-sm"
               >
                 <Brain className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
                 <span>AI Voice Prep</span>
