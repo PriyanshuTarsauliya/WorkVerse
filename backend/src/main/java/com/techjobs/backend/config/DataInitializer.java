@@ -174,6 +174,72 @@ public class DataInitializer implements CommandLineRunner {
                         .salaryRange("₹24,00,000 - ₹36,00,000 INR")
                         .description("Build low-latency trading engines and risk management services using Spring Boot 3 and Java 21. Optimize DB queries and event-driven Kafka pipelines.")
                         .techStack(Arrays.asList("Java 21", "Spring Boot", "Kafka", "PostgreSQL", "Docker"))
+                        .build(),
+
+                Job.builder()
+                        .title("Summer Software Engineering Intern 2025")
+                        .company("Google India")
+                        .location("Bengaluru / Hyderabad")
+                        .jobType(JobType.INTERNSHIP)
+                        .category("Internships")
+                        .salaryRange("₹12,00,000 - ₹15,00,000 INR")
+                        .description("Work directly alongside Google software engineers on real production code for Search, Cloud, or Android. Paid 3-month internship with PPO opportunities.")
+                        .techStack(Arrays.asList("C++", "Java", "Python", "Algorithms", "Data Structures"))
+                        .build(),
+
+                Job.builder()
+                        .title("Operations & Business Strategy Lead")
+                        .company("Zomato")
+                        .location("Delhi NCR, India")
+                        .jobType(JobType.FULL_TIME)
+                        .category("Operations & HR")
+                        .salaryRange("₹22,00,000 - ₹32,00,000 INR")
+                        .description("Optimize quick-commerce supply chain logistics and partner rider efficiency across tier 1 & 2 cities in India.")
+                        .techStack(Arrays.asList("Supply Chain", "Operations", "SQL", "Data Analytics", "Vendor Mgmt"))
+                        .build(),
+
+                Job.builder()
+                        .title("Cloud Solution Architect (Azure & AI)")
+                        .company("Microsoft")
+                        .location("Hyderabad, India")
+                        .jobType(JobType.HYBRID)
+                        .category("Engineering")
+                        .salaryRange("₹35,00,000 - ₹55,00,000 INR")
+                        .description("Architect enterprise AI solutions leveraging Azure OpenAI and distributed cloud infrastructure for Fortune 500 enterprise clients.")
+                        .techStack(Arrays.asList("Azure", "OpenAI", "Kubernetes", "C#", "System Architecture"))
+                        .build(),
+
+                Job.builder()
+                        .title("Staff Distributed Systems Engineer")
+                        .company("PhonePe")
+                        .location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME)
+                        .category("Engineering")
+                        .salaryRange("₹40,00,000 - ₹65,00,000 INR")
+                        .description("Architect fault-tolerant payment transaction processing pipelines handling over 100M daily UPI payments across India.")
+                        .techStack(Arrays.asList("Java", "Go", "Cassandra", "Kafka", "Distributed Systems"))
+                        .build(),
+
+                Job.builder()
+                        .title("Senior Reliability Engineer (SRE)")
+                        .company("Atlassian")
+                        .location("Bengaluru, India")
+                        .jobType(JobType.REMOTE)
+                        .category("Engineering")
+                        .salaryRange("₹30,00,000 - ₹48,00,000 INR")
+                        .description("Ensure 99.99% availability for Jira Cloud & Confluence global enterprise deployments. Automate chaos testing and infrastructure as code.")
+                        .techStack(Arrays.asList("Terraform", "AWS", "Kubernetes", "Python", "Observability"))
+                        .build(),
+
+                Job.builder()
+                        .title("Database Kernel Core Engineer")
+                        .company("Oracle")
+                        .location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME)
+                        .category("Engineering")
+                        .salaryRange("₹26,00,000 - ₹40,00,000 INR")
+                        .description("Design high-performance memory management and transaction storage engine kernels for Autonomous Database Cloud.")
+                        .techStack(Arrays.asList("C", "C++", "Linux Kernel", "Operating Systems", "Multithreading"))
                         .build()
         );
 

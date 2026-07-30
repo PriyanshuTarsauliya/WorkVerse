@@ -46,7 +46,7 @@ import { useConfetti } from './components/ui/Confetti';
 import { DEFAULT_CANDIDATE_PROFILE, calculateJobMatchScore, generateProfileSuggestions } from './utils/recommendationEngine';
 import { getInitialTheme, applyTheme, saveThemeChoice, initThemeListener } from './utils/theme';
 
-const JOBS_PER_PAGE = 6;
+const JOBS_PER_PAGE = 12;
 
 const MOCK_WORKVERSE_JOBS = [
   {
@@ -238,6 +238,82 @@ const MOCK_WORKVERSE_JOBS = [
       salaryTransparency: 'ESOP options for all leadership and strategy roles.',
       techMaturity: 'High — Real-time geo-clustering & route optimization.'
     }
+  },
+  {
+    id: 11, title: 'Cloud Solution Architect (Azure & AI)', company: 'Microsoft',
+    companyRating: 4.8, companyReviewCount: 5200, location: 'Hyderabad, India',
+    jobType: 'HYBRID', category: 'Engineering', salaryMin: 3500000, salaryMax: 5500000, currency: 'INR',
+    description: 'Architect enterprise AI solutions leveraging Azure OpenAI and distributed cloud infrastructure for Fortune 500 enterprise clients.',
+    techStack: ['Azure', 'OpenAI', 'Kubernetes', 'C#', 'System Architecture'],
+    experienceLevel: 'Senior Level', experienceYears: '6-10',
+    remoteOnly: false, isBookmarked: false, applicationCount: 14, postedDaysAgo: 1, urgency: 'Actively Hiring',
+    companyInsights: {
+      summary: 'Big Tech • Azure AI Leader • Avg Tenure 4.1 yrs',
+      funding: 'Public (NASDAQ: MSFT)',
+      growth: 'Rapid expansion in Enterprise Copilot & Azure OpenAI',
+      avgTenure: '4.1 yrs',
+      glassdoorRating: '4.8★',
+      culture: 'Growth mindset, high psychological safety, inclusive environment.',
+      salaryTransparency: 'Competitive global base + annual performance stock units.',
+      techMaturity: 'Exceptional — World-class Azure cloud & AI infrastructure.'
+    }
+  },
+  {
+    id: 12, title: 'Staff Distributed Systems Engineer', company: 'PhonePe',
+    companyRating: 4.7, companyReviewCount: 1600, location: 'Bengaluru, India',
+    jobType: 'FULL_TIME', category: 'Engineering', salaryMin: 4000000, salaryMax: 6500000, currency: 'INR',
+    description: 'Architect fault-tolerant payment transaction processing pipelines handling over 100M daily UPI payments across India.',
+    techStack: ['Java', 'Go', 'Cassandra', 'Kafka', 'Distributed Systems'],
+    experienceLevel: 'Lead / Staff', experienceYears: '8+',
+    remoteOnly: false, isBookmarked: false, applicationCount: 3, postedDaysAgo: 2, urgency: 'Actively Hiring',
+    companyInsights: {
+      summary: 'Walmart FinTech • 100M Daily UPI • Avg Tenure 2.9 yrs',
+      funding: '$12B+ Valuation (Walmart Backed)',
+      growth: 'Market leader in UPI payments processing',
+      avgTenure: '2.9 yrs',
+      glassdoorRating: '4.7★',
+      culture: 'High technical rigor, scale-first mentality, rapid deployment.',
+      salaryTransparency: 'Top tier compensation with liquidity-backed stock options.',
+      techMaturity: 'High — Custom in-house distributed database storage.'
+    }
+  },
+  {
+    id: 13, title: 'Senior Reliability Engineer (SRE)', company: 'Atlassian',
+    companyRating: 4.8, companyReviewCount: 1200, location: 'Bengaluru, India',
+    jobType: 'REMOTE', category: 'Engineering', salaryMin: 3000000, salaryMax: 4800000, currency: 'INR',
+    description: 'Ensure 99.99% availability for Jira Cloud & Confluence global enterprise deployments. Automate chaos testing and infrastructure as code.',
+    techStack: ['Terraform', 'AWS', 'Kubernetes', 'Python', 'Observability'],
+    experienceLevel: 'Senior Level', experienceYears: '5-8',
+    remoteOnly: true, isBookmarked: false, applicationCount: 19, postedDaysAgo: 4,
+    companyInsights: {
+      summary: 'SaaS Leader • Team Anywhere • Avg Tenure 3.5 yrs',
+      funding: 'Public (NASDAQ: TEAM)',
+      growth: 'Cloud migration of 250k+ global enterprise customers',
+      avgTenure: '3.5 yrs',
+      glassdoorRating: '4.8★',
+      culture: 'Team Anywhere policy, high trust, open communication.',
+      salaryTransparency: 'Transparent global pay location-adjusted bands.',
+      techMaturity: 'High — Microservice cloud architecture, automated SRE runbooks.'
+    }
+  },
+  {
+    id: 14, title: 'Database Kernel Core Engineer', company: 'Oracle',
+    companyRating: 4.3, companyReviewCount: 3800, location: 'Bengaluru, India',
+    jobType: 'FULL_TIME', category: 'Engineering', salaryMin: 2600000, salaryMax: 4000000, currency: 'INR',
+    description: 'Design high-performance memory management and transaction storage engine kernels for Autonomous Database Cloud.',
+    techStack: ['C', 'C++', 'Linux Kernel', 'Operating Systems', 'Multithreading'],
+    experienceLevel: 'Mid / Senior', experienceYears: '4-7',
+    remoteOnly: false, isBookmarked: false, applicationCount: 9, postedDaysAgo: 3,
+    companyInsights: {
+      summary: 'Enterprise Cloud • Core R&D • Avg Tenure 4.0 yrs',
+      funding: 'Public (NYSE: ORCL)',
+      growth: 'OCI Autonomous Cloud database engineering expansion',
+      avgTenure: '4.0 yrs',
+      glassdoorRating: '4.3★',
+      culture: 'Deep systems engineering focus, structured R&D.',
+      salaryTransparency: 'Standard corporate bands & equity grants.',
+      techMaturity: 'High — Systems level kernel optimization & hardware integration.'
+    }
   }
 ];
 
@@ -317,6 +393,26 @@ function AppContent() {
   }, []);
 
 
+  const isAnyModalOpen = Boolean(
+    isDetailOpen || isApplyOpen || isPostJobOpen || isProfileAnalysisOpen ||
+    isProfileOpen || isResumeBuilderOpen || isAuthOpen || isPrepHubOpen ||
+    isSalaryGuideOpen || isCompaniesDirectoryOpen || isCodingPlaygroundOpen ||
+    isAIMockInterviewOpen || isHiringChallengesOpen || isPremiumModalOpen ||
+    isJobAlertsOpen || isReferralOpen || isOnboardingOpen || isKYCOpen ||
+    isDPDPOpen || isATSOpen || isReportOpen || isAdminOpen || isMarketDemandOpen
+  );
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isAnyModalOpen]);
+
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
@@ -327,9 +423,10 @@ function AppContent() {
     const fetchBackendJobs = async () => {
       setIsLoadingJobs(true);
       try {
-        const data = await fetchApi('/api/v1/jobs');
+        let baseJobs = MOCK_WORKVERSE_JOBS;
+        const data = await fetchApi('/api/v1/jobs').catch(() => null);
         if (data && data.length > 0) {
-          const mappedJobs = data.map((job) => ({
+          baseJobs = data.map((job) => ({
             id: job.id,
             title: job.title,
             company: job.company,
@@ -362,10 +459,49 @@ function AppContent() {
               techMaturity: 'Modern'
             }
           }));
-          setJobs(mappedJobs);
-        } else {
-          setJobs(MOCK_WORKVERSE_JOBS);
         }
+
+        // Fetch live aggregator job feed
+        const liveData = await fetchApi('/api/jobs/live').catch(() => null);
+        let liveMapped = [];
+        if (liveData && Array.isArray(liveData) && liveData.length > 0) {
+          liveMapped = liveData.map((rj) => ({
+            id: `live-${rj.id}`,
+            title: rj.title,
+            company: rj.companyName || 'Global Tech',
+            companyLogo: rj.companyLogo,
+            companyRating: 4.8,
+            companyReviewCount: 320,
+            location: rj.candidateRequiredLocation || 'Remote / Global',
+            jobType: rj.jobType ? rj.jobType.toUpperCase().replace('-', '_') : 'REMOTE',
+            category: rj.category || 'Engineering',
+            customSalaryString: rj.salary || 'Disclosed Benchmark',
+            salaryMin: 2000000,
+            salaryMax: 3500000,
+            currency: 'USD',
+            description: rj.description ? rj.description.replace(/<[^>]*>?/gm, '').substring(0, 250) + '...' : 'Live job posting from top tech company.',
+            techStack: rj.tags || ['Remote', 'Software Engineering'],
+            experienceLevel: 'Mid / Senior',
+            experienceYears: '2-5',
+            remoteOnly: true,
+            isBookmarked: false,
+            applicationCount: Math.floor(Math.random() * 50) + 10,
+            postedDaysAgo: 1,
+            externalUrl: rj.url,
+            companyInsights: {
+              summary: 'Live Aggregator Listing (Indeed/Naukri Feed)',
+              funding: 'Global Tech Employer',
+              growth: 'Actively Hiring',
+              avgTenure: '2.8 yrs',
+              glassdoorRating: '4.8★',
+              culture: 'High autonomy, remote-friendly, agile delivery.',
+              salaryTransparency: rj.salary || 'Transparent Compensation',
+              techMaturity: 'High'
+            }
+          }));
+        }
+
+        setJobs([...baseJobs, ...liveMapped]);
       } catch (err) {
         console.error("Failed to fetch backend jobs", err);
         setJobs(MOCK_WORKVERSE_JOBS);
@@ -677,13 +813,13 @@ function AppContent() {
             </motion.div>
 
             {/* Navigation Links - Condensed into 2 Dropdowns */}
-            <div className="hidden md:flex items-center gap-2 font-medium text-xs text-txtMuted">
+            <div className="hidden md:flex items-center gap-2 font-medium text-xs">
               {/* Explore Dropdown */}
               <div className="relative" onMouseLeave={() => setIsExploreDropdownOpen(false)}>
                 <button
                   onMouseEnter={() => setIsExploreDropdownOpen(true)}
                   onClick={() => setIsExploreDropdownOpen(!isExploreDropdownOpen)}
-                  className="px-3 py-1.5 rounded-lg hover:text-txtMain hover:bg-nested transition-colors flex items-center gap-1 font-semibold"
+                  className="px-3 py-1.5 rounded-lg text-slate-800 dark:text-slate-100 hover:bg-surface-nested transition-colors flex items-center gap-1 font-bold"
                 >
                   <span>Explore</span>
                   <ChevronDown className="w-3.5 h-3.5" />
@@ -693,28 +829,28 @@ function AppContent() {
                   <div className="absolute left-0 top-full mt-1 w-48 bg-surface border border-borderStrong rounded-xl shadow-xl p-1.5 z-50 space-y-1">
                     <button
                       onClick={() => { handleResetFilters(); setIsExploreDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <Briefcase className="w-3.5 h-3.5 text-amber-500" />
                       <span>Browse Jobs</span>
                     </button>
                     <button
                       onClick={() => { setIsSalaryGuideOpen(true); setIsExploreDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
                       <span>Salary Guide 2025</span>
                     </button>
                     <button
                       onClick={() => { setIsCompaniesDirectoryOpen(true); setIsExploreDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <Building2 className="w-3.5 h-3.5 text-indigo-400" />
                       <span>Companies Directory</span>
                     </button>
                     <button
                       onClick={() => { setIsMarketDemandOpen(true); setIsExploreDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <Zap className="w-3.5 h-3.5 text-amber-400" />
                       <span>Market Insights</span>
@@ -728,9 +864,9 @@ function AppContent() {
                 <button
                   onMouseEnter={() => setIsAiToolsDropdownOpen(true)}
                   onClick={() => setIsAiToolsDropdownOpen(!isAiToolsDropdownOpen)}
-                  className="px-3 py-1.5 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-colors flex items-center gap-1.5 font-bold"
+                  className="px-3 py-1.5 rounded-lg text-amber-600 dark:text-amber-300 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 transition-colors flex items-center gap-1.5 font-bold"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                   <span>AI Tools</span>
                   <ChevronDown className="w-3.5 h-3.5" />
                 </button>
@@ -739,21 +875,21 @@ function AppContent() {
                   <div className="absolute left-0 top-full mt-1 w-56 bg-surface border border-borderStrong rounded-xl shadow-xl p-1.5 z-50 space-y-1">
                     <button
                       onClick={() => { setIsAIMockInterviewOpen(true); setIsAiToolsDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-emerald-400 hover:bg-emerald-500/10 transition-colors font-semibold flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors font-semibold flex items-center gap-2"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>Voice Mock Interview</span>
                     </button>
                     <button
                       onClick={() => { setIsPrepHubOpen(true); setIsAiToolsDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <FileText className="w-3.5 h-3.5 text-amber-400" />
                       <span>Resume ATS Checker</span>
                     </button>
                     <button
                       onClick={() => { setIsCodingPlaygroundOpen(true); setIsAiToolsDropdownOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-txtMuted hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-xs rounded-lg text-slate-700 dark:text-slate-200 hover:text-txtMain hover:bg-nested transition-colors font-medium flex items-center gap-2"
                     >
                       <Terminal className="w-3.5 h-3.5 text-indigo-400" />
                       <span>Coding Sandbox</span>
@@ -928,36 +1064,36 @@ function AppContent() {
                 3-Step Hiring Acceleration
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-txtMain tracking-tight">How WorkVerse Empowers Your Career</h2>
-              <p className="text-xs text-txtMuted">From ATS resume optimization to AI voice practice and 1-click applications.</p>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold">From ATS resume optimization to AI voice practice and 1-click applications.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-amber-500/40 transition-all shadow-sm">
-                <div className="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-500 font-mono text-xs font-bold w-max border border-amber-500/20">
+              <div className="bg-main border border-borderStrong p-6 rounded-2xl space-y-3 relative hover:border-amber-500/40 transition-all shadow-sm">
+                <div className="px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 font-mono text-xs font-bold w-max border border-amber-500/30">
                   STEP 01 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">Create & Parse Profile</h3>
-                <p className="text-xs text-txtMuted leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                   Upload your resume to calculate your match score against live openings and receive instant skill gap suggestions.
                 </p>
               </div>
 
-              <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-emerald-500/40 transition-all shadow-sm">
-                <div className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold w-max border border-emerald-500/20">
+              <div className="bg-main border border-borderStrong p-6 rounded-2xl space-y-3 relative hover:border-emerald-500/40 transition-all shadow-sm">
+                <div className="px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold w-max border border-emerald-500/30">
                   STEP 02 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">AI Voice Practice & Coding</h3>
-                <p className="text-xs text-txtMuted leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                   Practice audio interview questions with simulated TTS voice readers or hone coding challenges in our sandbox.
                 </p>
               </div>
 
-              <div className="bg-main border border-borderSubtle p-6 rounded-2xl space-y-3 relative hover:border-indigo-500/40 transition-all shadow-sm">
-                <div className="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 font-mono text-xs font-bold w-max border border-indigo-500/20">
+              <div className="bg-main border border-borderStrong p-6 rounded-2xl space-y-3 relative hover:border-indigo-500/40 transition-all shadow-sm">
+                <div className="px-2.5 py-1 rounded-md bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-mono text-xs font-bold w-max border border-indigo-500/30">
                   STEP 03 / 03
                 </div>
                 <h3 className="text-base font-bold text-txtMain">Apply & Track Status</h3>
-                <p className="text-xs text-txtMuted leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                   Apply directly to recruiters, request internal referral boosts, and track application stages live on your tracker.
                 </p>
               </div>

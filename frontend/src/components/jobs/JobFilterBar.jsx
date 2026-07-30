@@ -254,10 +254,35 @@ export default function JobFilterBar({
         )}
       </div>
 
+      {/* Quick Company Filters Bar (Naukri/Indeed Style Multi-Company Aggregator) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs">
+        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 shrink-0 uppercase tracking-wider">Top Employers:</span>
+        {['All Companies', 'Google', 'Microsoft', 'Flipkart', 'Swiggy', 'PhonePe', 'Razorpay', 'Goldman Sachs', 'Zomato', 'Postman', 'CRED', 'Oracle', 'Atlassian'].map((comp) => {
+          const isSelected = comp === 'All Companies' ? !filters.search : filters.search?.toLowerCase() === comp.toLowerCase();
+          return (
+            <button
+              key={comp}
+              onClick={() => handleChange('search', comp === 'All Companies' ? '' : comp)}
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all border ${
+                isSelected
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-extrabold shadow-sm'
+                  : 'bg-surface/80 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border-borderSubtle hover:border-accent/40'
+              }`}
+            >
+              {comp}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Results count & Job Alert */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-txtMuted">
-          Showing <span className="font-bold text-txtMain">{totalJobsCount}</span> of {totalAllCount} jobs
+        <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+          {totalJobsCount < totalAllCount ? (
+            <>Showing <span className="font-bold text-slate-900 dark:text-slate-100">{totalJobsCount}</span> matching roles out of <span className="font-semibold text-slate-900 dark:text-slate-100">{totalAllCount}</span> active listings</>
+          ) : (
+            <>Showing <span className="font-bold text-slate-900 dark:text-slate-100">{totalJobsCount}</span> active openings <span className="text-slate-600 dark:text-slate-400 font-normal">(10,000+ verified roles available)</span></>
+          )}
         </p>
         <div className="flex items-center gap-2">
           <button 

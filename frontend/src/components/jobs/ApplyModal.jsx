@@ -86,6 +86,24 @@ export default function ApplyModal({ job, isOpen, onClose, onSubmitSuccess, appl
             </button>
           </div>
 
+          {job.externalUrl && (
+            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs gap-3">
+              <div>
+                <p className="font-bold text-amber-400">Official Employer Careers Portal</p>
+                <p className="text-[11px] text-slate-300">Live job listing from {job.company}. Direct redirect available.</p>
+              </div>
+              <a
+                href={job.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-1 shrink-0 text-xs shadow-sm transition-all"
+              >
+                <span>Direct Apply</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
+
           {!isSubmitted ? (
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">

@@ -95,77 +95,39 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
       onClick={() => onApply(job)}
       data-testid={`job-card-${job.id}`}
-      className={`group relative rounded-xl cursor-pointer theme-transition shadow-sm hover:shadow-md ${
+      className={`group relative rounded-xl cursor-pointer theme-transition shadow-md hover:shadow-xl bg-surface border ${
         isTopRecommended
-          ? 'border-accent/40 bg-accent/5 dark:bg-accent/10'
+          ? 'border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/10'
           : 'border-borderSubtle hover:border-borderStrong'
       }`}
     >
-      <SpotlightCard className="h-full p-5 flex flex-col justify-between rounded-xl">
-      {/* Top Recommendation Badge */}
-      {isTopRecommended && (
-        <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent text-white shadow-lg flex items-center gap-1 z-20">
-          <Sparkles className="w-3 h-3 fill-white animate-pulse-subtle" />
-          Top Recommendation
-        </div>
-      )}
-
-      {/* Urgency Badge — Left Side */}
-      {!isTopRecommended && isUrgent && (
-        <div className="absolute -top-3 left-4 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg flex items-center gap-1 z-20">
-          <Flame className="w-3 h-3 fill-white" />
-          Closing Soon
-        </div>
-      )}
-
-      {/* Live Viewers Badge */}
-      <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface/80 backdrop-blur-sm border border-borderSubtle text-[10px] text-txtMuted z-20">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-        </span>
-        <Eye className="w-2.5 h-2.5" />
-        {liveViewers} viewing
-      </div>
-
+      <SpotlightCard className="h-full p-5 flex flex-col justify-between rounded-xl bg-surface">
       <div className="flex flex-col h-full justify-between relative z-10">
         {/* Header row */}
         <div>
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-start gap-3">
-              {job.companyLogo ? (
-                <div className="w-10 h-10 rounded-lg bg-white shrink-0 shadow-md flex items-center justify-center border border-borderSubtle overflow-hidden relative">
-                  <img 
-                    src={job.companyLogo} 
-                    alt={job.company} 
-                    className="w-full h-full object-contain p-1" 
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }} 
-                  />
-                  <div className={`hidden absolute inset-0 bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} items-center justify-center text-white text-sm font-bold w-full h-full`}>
-                    {(job.company || 'W').charAt(0)}
-                  </div>
-                </div>
-              ) : (
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md`}>
-                  {(job.company || 'W').charAt(0)}
-                </div>
+          {/* Top Badges & Actions Row */}
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              {isTopRecommended && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1 shrink-0 shadow-sm">
+                  <Sparkles className="w-3 h-3 fill-amber-500 dark:fill-amber-400" />
+                  Top Recommendation
+                </span>
               )}
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold text-txtMain leading-snug group-hover:text-accent transition-colors line-clamp-2" data-testid={`job-title-${job.id}`}>
-                  {job.title}
-                </h3>
-                <div className="flex items-center gap-2 mt-1 text-sm text-txtMuted">
-                  <span className="font-medium text-txtMain/90" data-testid={`job-company-${job.id}`}>{job.company}</span>
-                  <span className="flex items-center gap-0.5 text-amber-500 font-semibold">
-                    <Star className="w-3 h-3 fill-amber-500" />
-                    {job.companyRating}
-                  </span>
-                  <span className="text-txtMuted text-xs">({job.companyReviewCount})</span>
-                </div>
-              </div>
+              {!isTopRecommended && isUrgent && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center gap-1 shrink-0 shadow-sm">
+                  <Flame className="w-3 h-3 fill-rose-500 dark:fill-rose-400" />
+                  Closing Soon
+                </span>
+              )}
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-nested border border-borderStrong text-[10px] text-slate-700 dark:text-slate-200 font-semibold shrink-0">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <Eye className="w-2.5 h-2.5 text-slate-500 dark:text-slate-300" />
+                {liveViewers} viewing
+              </span>
             </div>
 
             {/* Bookmark Button */}
@@ -176,22 +138,59 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
               data-testid={`bookmark-button-${job.id}`}
               className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
                 isSaved
-                  ? 'bg-rose-500/20 text-rose-500 shadow-sm border border-rose-500/30'
-                  : 'bg-nested text-txtMuted hover:text-txtMain hover:bg-borderSubtle border border-borderStrong'
+                  ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 shadow-sm border border-rose-500/40'
+                  : 'bg-nested text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-borderSubtle border border-borderStrong'
               }`}
               aria-label="Bookmark Job"
             >
-              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-rose-500' : ''}`} />
+              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-rose-500 dark:fill-rose-400' : ''}`} />
             </motion.button>
           </div>
 
+          {/* Company & Title Row */}
+          <div className="flex items-start gap-3 mb-3">
+            {job.companyLogo ? (
+              <div className="w-10 h-10 rounded-lg bg-white shrink-0 shadow-md flex items-center justify-center border border-borderSubtle overflow-hidden relative">
+                <img 
+                  src={job.companyLogo} 
+                  alt={job.company} 
+                  className="w-full h-full object-contain p-1" 
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }} 
+                />
+                <div className={`hidden absolute inset-0 bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} items-center justify-center text-white text-sm font-bold w-full h-full`}>
+                  {(job.company || 'W').charAt(0)}
+                </div>
+              </div>
+            ) : (
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${COMPANY_COLORS[colorIdx]} flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md`}>
+                {(job.company || 'W').charAt(0)}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2" data-testid={`job-title-${job.id}`}>
+                {job.title}
+              </h3>
+              <div className="flex items-center gap-2 mt-1 text-sm">
+                <span className="font-semibold text-slate-700 dark:text-slate-200 truncate" data-testid={`job-company-${job.id}`}>{job.company}</span>
+                <span className="flex items-center gap-0.5 text-amber-600 dark:text-amber-400 font-bold shrink-0">
+                  <Star className="w-3.5 h-3.5 fill-amber-500" />
+                  {job.companyRating}
+                </span>
+                <span className="text-slate-500 dark:text-slate-400 text-xs shrink-0 font-medium">({job.companyReviewCount})</span>
+              </div>
+            </div>
+          </div>
+
           {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-txtMuted mb-3">
-            <span className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-txtMuted" />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm font-medium mb-3">
+            <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
+              <MapPin className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               {job.location}
             </span>
-            <span className="flex items-center gap-1 text-success font-bold" data-testid={`job-salary-${job.id}`}>
+            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-extrabold" data-testid={`job-salary-${job.id}`}>
               {job.customSalaryString ? (
                 <>
                   <DollarSign className="w-3.5 h-3.5" />
@@ -209,20 +208,20 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
           {/* Badges row */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             {matchScore != null && (
-              <span className="flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-500 shadow-sm">
+              <span className="flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-sm">
                 <TrendingUp className="w-3 h-3" />
                 {matchScore}% Match
               </span>
             )}
-            <span className="px-2 py-0.5 text-xs font-semibold text-txtMain bg-nested border border-borderStrong rounded-md">
+            <span className="px-2.5 py-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-nested border border-borderStrong rounded-md">
               {(job.jobType || 'FULL_TIME').replace('_', ' ')}
             </span>
             {job.experienceYears && (
-              <span className="px-2 py-0.5 text-xs font-medium text-txtMuted bg-nested border border-borderStrong rounded-md">
+              <span className="px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-nested border border-borderStrong rounded-md">
                 {job.experienceYears} yrs
               </span>
             )}
-            <span className="flex items-center gap-1 px-2 py-0.5 text-xs text-txtMuted bg-nested border border-borderStrong rounded-md">
+            <span className="flex items-center gap-1 px-2 py-0.5 text-xs text-slate-500 dark:text-slate-400 bg-nested border border-borderStrong rounded-md font-medium">
               <Clock className="w-3 h-3" />
               {formatPostedDate(job.postedDaysAgo)}
             </span>
@@ -230,14 +229,14 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
 
           {/* Company Insight Snippet */}
           {job.companyInsights?.summary && (
-            <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-amber-500/5 border border-amber-500/20 text-[11px] font-medium text-txtMuted flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <div className="mb-3 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] font-semibold text-amber-800 dark:text-amber-200 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
               <span className="truncate">{job.companyInsights.summary}</span>
             </div>
           )}
 
           {/* Description */}
-          <p className="text-sm text-txtMuted line-clamp-2 mb-4 leading-relaxed">
+          <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-4 leading-relaxed font-normal">
             {job.description}
           </p>
 
@@ -246,17 +245,17 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
             {(job.techStack || []).slice(0, 4).map((tech, i) => (
               <span
                 key={i}
-                className="px-2 py-0.5 text-xs font-mono font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-md flex items-center gap-0.5"
+                className="px-2.5 py-0.5 text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 rounded-md flex items-center gap-0.5"
               >
-                <span className="text-emerald-400 font-bold">+</span> {tech}
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">+</span> {tech}
               </span>
             ))}
             {(job.gapSkills || ['Kubernetes']).slice(0, 1).map((gap, i) => (
               <span
                 key={`gap-${i}`}
-                className="px-2 py-0.5 text-xs font-mono font-medium text-txtMuted bg-transparent border border-dashed border-borderStrong rounded-md flex items-center gap-0.5 opacity-80"
+                className="px-2 py-0.5 text-xs font-mono font-medium text-slate-500 dark:text-slate-400 bg-nested border border-dashed border-borderStrong rounded-md flex items-center gap-0.5"
               >
-                <span className="text-txtMuted font-bold">–</span> {gap}
+                <span className="text-slate-400 font-bold">–</span> {gap}
               </span>
             ))}
           </div>
@@ -267,11 +266,11 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
           {/* Row 1: Competition badge + Share */}
           <div className="flex items-center justify-between">
             {(job.applicationCount || 0) < 10 ? (
-              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-md">
                 🚀 First 10 applicants!
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-700 dark:text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-md">
                 🔥 {job.applicationCount} applied
               </span>
             )}
@@ -280,7 +279,7 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={(e) => { e.stopPropagation(); onShareJob?.(job); }}
-              className="w-7 h-7 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-txtMuted hover:text-txtMain transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-lg bg-nested hover:bg-borderSubtle border border-borderStrong flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               title="Share this job"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -334,8 +333,8 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
 export default function JobsGrid({ jobs = [], isLoading = false, onApply, onToggleBookmark, onShareJob, applications, isPremium }) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-5">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 w-full">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
           <JobCardSkeleton key={i} />
         ))}
       </div>
@@ -347,7 +346,7 @@ export default function JobsGrid({ jobs = [], isLoading = false, onApply, onTogg
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center py-16 bg-surface border border-borderSubtle rounded-xl"
+        className="text-center py-16 bg-surface border border-borderSubtle rounded-xl w-full"
       >
         <p className="text-txtMain text-base font-semibold">No jobs match your filters.</p>
         <p className="text-txtMuted text-sm mt-1">Try adjusting your search query or clearing domain filters.</p>
@@ -356,7 +355,7 @@ export default function JobsGrid({ jobs = [], isLoading = false, onApply, onTogg
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 w-full">
       <AnimatePresence>
         {jobs.map((job, index) => (
           <JobCard

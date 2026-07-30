@@ -61,13 +61,13 @@ export default function LiveActivityTicker() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -16, opacity: 0 }}
               transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-              className="flex items-center gap-2 text-xs text-txtMuted"
+              className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium"
             >
               {activity.icon}
               <span className="font-medium">
-                <span className="text-txtMain font-semibold">{activity.text}</span>
+                <span className="text-txtMain font-bold">{activity.text}</span>
                 <span className="mx-1.5 text-borderStrong">•</span>
-                <span className="text-txtMuted">{activity.time}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-semibold">{activity.time}</span>
               </span>
             </motion.div>
           </AnimatePresence>

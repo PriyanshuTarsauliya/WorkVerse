@@ -16,6 +16,16 @@ const formatSalary = (min, max) => {
 export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onShareJob, applications, allJobs = [], onStartMockInterview }) {
   const [showInsights, setShowInsights] = useState(false);
 
+  React.useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen || !job) return null;
 
   const responsibilities = [
@@ -68,10 +78,11 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 220 }}
           data-testid="job-detail-modal"
-          className="relative z-10 w-full max-w-2xl h-full bg-surface border-l border-borderSubtle flex flex-col overflow-y-auto theme-transition shadow-2xl"
+          data-lenis-prevent
+          className="relative z-10 w-full max-w-2xl h-full bg-surface border-l border-borderSubtle flex flex-col overflow-hidden theme-transition shadow-2xl"
         >
           {/* Header */}
-          <div className="p-6 bg-surface-nested border-b border-borderSubtle">
+          <div className="p-6 bg-surface-nested border-b border-borderSubtle shrink-0">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 border border-borderSubtle flex items-center justify-center text-white text-lg font-bold shadow-md">
@@ -134,7 +145,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
           </div>
 
           {/* Body */}
-          <div className="flex-1 p-6 space-y-8">
+          <div className="flex-1 p-6 space-y-8 overflow-y-auto min-h-0 overscroll-contain" data-lenis-prevent>
             {/* Company Insights Snippet & Drawer */}
             {job.companyInsights && (
               <div className="bg-nested/60 border border-borderSubtle rounded-xl p-4">
@@ -261,7 +272,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
           </div>
 
           {/* Footer CTA */}
-          <div className="p-5 bg-surface-nested border-t border-borderSubtle flex items-center justify-between gap-3">
+          <div className="p-5 bg-surface-nested border-t border-borderSubtle flex items-center justify-between gap-3 shrink-0">
             <div>
               <p className="text-xs font-bold text-accent">
                 {(job.applicationCount || 0) < 10 ? '🚀 Be among the first 10 applicants!' : `🔥 ${job.applicationCount} applied in last 2 hours`}

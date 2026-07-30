@@ -7,13 +7,28 @@ import { fetchApi } from '../../utils/api';
 // Static fallbacks for missing backend properties
 const MOCK_BENEFITS = ['Flexible WFH / Hybrid', 'Comprehensive Health Cover', 'Annual Learning Allowance', 'Stock Options (ESOPs)'];
 
+const DEFAULT_COMPANIES = [
+  { id: 1, name: 'Razorpay', category: 'Fintech / Payments', rating: 4.8, reviewCount: 1420, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: 'Unicorn ($370M Series F)', avgTenure: '2.4 yrs', techStack: ['React', 'TypeScript', 'Go', 'PHP', 'AWS'], description: "India's leading full-stack financial services platform powering payments for over 8 million businesses.", benefits: MOCK_BENEFITS, openJobsCount: 12 },
+  { id: 2, name: 'Swiggy', category: 'Consumer Tech / Quick Commerce', rating: 4.6, reviewCount: 980, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: 'Public (NSE/BSE Listed)', avgTenure: '2.1 yrs', techStack: ['Java', 'Go', 'React Native', 'Kafka', 'Redis'], description: 'Hyperlocal food delivery and quick commerce leader connecting 50M+ users across 500+ Indian cities.', benefits: MOCK_BENEFITS, openJobsCount: 18 },
+  { id: 3, name: 'CRED', category: 'Fintech / Premium Rewards', rating: 4.8, reviewCount: 610, headquarters: 'Bengaluru, India', size: 'Mid-Size', funding: 'Unicorn ($140M Series F)', avgTenure: '2.0 yrs', techStack: ['Flutter', 'Kotlin', 'Spring Boot', 'AWS', 'Figma'], description: 'Members-only credit card bill payment platform rewarding high-trust individuals in India.', benefits: MOCK_BENEFITS, openJobsCount: 8 },
+  { id: 4, name: 'Postman', category: 'Developer Tools / SaaS', rating: 4.9, reviewCount: 430, headquarters: 'Remote — India', size: 'Mid-Size', funding: 'Unicorn ($225M Series D)', avgTenure: '2.8 yrs', techStack: ['Next.js', 'Node.js', 'Python', 'GraphQL', 'PostgreSQL'], description: "The world's leading API platform used by over 25 million developers and 98% of Fortune 500 companies.", benefits: MOCK_BENEFITS, openJobsCount: 15 },
+  { id: 5, name: 'Flipkart', category: 'E-Commerce / GenAI', rating: 4.7, reviewCount: 2400, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: 'Walmart Enterprise', avgTenure: '3.1 yrs', techStack: ['Python', 'PyTorch', 'Spark', 'React', 'Java'], description: 'India’s leading e-commerce ecosystem processing petabytes of consumer and catalog data.', benefits: MOCK_BENEFITS, openJobsCount: 24 },
+  { id: 6, name: 'Google India', category: 'Big Tech / Cloud & AI', rating: 4.9, reviewCount: 4500, headquarters: 'Bengaluru / Hyderabad', size: 'Enterprise', funding: 'Alphabet (NASDAQ)', avgTenure: '4.5 yrs', techStack: ['C++', 'Java', 'Python', 'Go', 'TensorFlow'], description: 'Global tech leader shaping Search, Android, Cloud, and Next Billion Users products.', benefits: MOCK_BENEFITS, openJobsCount: 30 },
+  { id: 7, name: 'Goldman Sachs', category: 'Investment Banking / Fintech', rating: 4.3, reviewCount: 3100, headquarters: 'Hyderabad, India', size: 'Enterprise', funding: 'Public (NYSE: GS)', avgTenure: '3.8 yrs', techStack: ['Java 21', 'Spring Boot', 'Kafka', 'PostgreSQL', 'Docker'], description: 'Global financial institution building high-frequency quantitative trading & risk platforms.', benefits: MOCK_BENEFITS, openJobsCount: 14 },
+  { id: 8, name: 'Zomato', category: 'FoodTech / Operations', rating: 4.5, reviewCount: 1800, headquarters: 'Delhi NCR, India', size: 'Enterprise', funding: 'Public (NSE: ZOMATO)', avgTenure: '2.2 yrs', techStack: ['Python', 'React Native', 'Node.js', 'GeoSpatial', 'SQL'], description: 'Food ordering, restaurant discovery, and quick-commerce pioneer in India.', benefits: MOCK_BENEFITS, openJobsCount: 10 },
+  { id: 9, name: 'Microsoft', category: 'Big Tech / Azure AI', rating: 4.8, reviewCount: 5200, headquarters: 'Hyderabad, India', size: 'Enterprise', funding: 'Public (NASDAQ: MSFT)', avgTenure: '4.1 yrs', techStack: ['Azure', 'C#', 'TypeScript', 'Python', 'OpenAI'], description: 'Empowering every person and organization with Azure Cloud and Copilot AI technologies.', benefits: MOCK_BENEFITS, openJobsCount: 35 },
+  { id: 10, name: 'PhonePe', category: 'Fintech / UPI Payments', rating: 4.7, reviewCount: 1600, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: '$12B+ Valuation', avgTenure: '2.9 yrs', techStack: ['Java', 'Go', 'Cassandra', 'Kafka', 'Microservices'], description: "India's largest digital payments app processing over 100 million daily UPI transactions.", benefits: MOCK_BENEFITS, openJobsCount: 16 },
+  { id: 11, name: 'Atlassian', category: 'Enterprise SaaS / Collaboration', rating: 4.8, reviewCount: 1200, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: 'Public (NASDAQ: TEAM)', avgTenure: '3.5 yrs', techStack: ['React', 'Java', 'AWS', 'Terraform', 'GraphQL'], description: 'Building team collaboration software like Jira, Confluence, and Trello.', benefits: MOCK_BENEFITS, openJobsCount: 9 },
+  { id: 12, name: 'Oracle', category: 'Database Cloud & Systems', rating: 4.3, reviewCount: 3800, headquarters: 'Bengaluru, India', size: 'Enterprise', funding: 'Public (NYSE: ORCL)', avgTenure: '4.0 yrs', techStack: ['C', 'C++', 'Java', 'OCI Cloud', 'Linux'], description: 'Enterprise database software and cloud infrastructure giant powering Fortune 500 tech.', benefits: MOCK_BENEFITS, openJobsCount: 22 }
+];
+
 export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [activeCompany, setActiveCompany] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const [companies, setCompanies] = useState([]);
+  const [companies, setCompanies] = useState(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(false);
 
   React.useEffect(() => {
@@ -22,7 +37,7 @@ export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }
       setIsLoading(true);
       try {
         const data = await fetchApi('/api/v1/companies');
-        if (data && data.content) {
+        if (data && data.content && data.content.length > 0) {
           const mapped = data.content.map(c => ({
             id: c.id,
             name: c.name,
@@ -40,9 +55,12 @@ export default function CompaniesDirectoryModal({ isOpen, onClose, onSelectJob }
             featuredJobs: []
           }));
           setCompanies(mapped);
+        } else {
+          setCompanies(DEFAULT_COMPANIES);
         }
       } catch (err) {
         console.error('Failed to load companies:', err);
+        setCompanies(DEFAULT_COMPANIES);
       } finally {
         setIsLoading(false);
       }

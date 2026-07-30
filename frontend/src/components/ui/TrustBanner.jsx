@@ -59,30 +59,30 @@ export default function TrustBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="text-center p-4 rounded-xl bg-surface/50 border border-borderSubtle hover:border-accent/30 transition-all group cursor-default"
+              className="text-center p-5 rounded-2xl bg-surface/80 dark:bg-slate-900/60 border border-borderStrong hover:border-accent/40 transition-all group cursor-default shadow-md backdrop-blur-md"
             >
               <div className={`text-3xl sm:text-4xl font-extrabold font-mono tracking-tight ${stat.color}`}>
                 <AnimatedNumber target={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-xs text-txtMuted mt-1 font-medium">{stat.label}</div>
+              <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold mt-1.5">{stat.label}</div>
             </motion.div>
           ))}
         </div>
 
         {/* Scrolling Company Logos Ticker */}
-        <div className="space-y-3">
-          <p className="text-center text-xs font-semibold text-txtMuted uppercase tracking-widest">Trusted by Engineers at India's Top Companies</p>
+        <div className="space-y-4">
+          <p className="text-center text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Trusted by Engineers at India's Top Companies</p>
           <div className="relative overflow-hidden mask-fade-horizontal">
-            <div className="flex gap-8 animate-ticker">
+            <div className="flex gap-4 animate-ticker py-1">
               {[...logos, ...logos].map((name, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/40 border border-borderSubtle whitespace-nowrap shrink-0 hover:border-accent/30 transition-all"
+                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-surface/80 dark:bg-slate-900/80 border border-borderStrong whitespace-nowrap shrink-0 hover:border-accent/50 transition-all shadow-sm"
                 >
-                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500/20 to-sky-500/20 flex items-center justify-center text-xs font-bold text-indigo-400 border border-indigo-500/20">
+                  <div className="w-6 h-6 rounded-md bg-indigo-500/20 dark:bg-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-500/40">
                     {name.charAt(0)}
                   </div>
-                  <span className="text-xs font-semibold text-txtMain">{name}</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">{name}</span>
                 </div>
               ))}
             </div>
