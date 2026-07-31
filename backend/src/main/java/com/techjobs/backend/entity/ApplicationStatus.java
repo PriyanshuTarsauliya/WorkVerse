@@ -2,7 +2,8 @@ package com.techjobs.backend.entity;
 
 public enum ApplicationStatus {
     APPLIED,
-    SCREENED,
+    UNDER_REVIEW,
+    SHORTLISTED,
     INTERVIEW_SCHEDULED,
     OFFERED,
     REJECTED,

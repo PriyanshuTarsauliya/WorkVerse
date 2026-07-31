@@ -41,19 +41,49 @@ export default function ApplyModal({ job, isOpen, onClose, onSubmitSuccess, appl
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     const valErrs = validate();
     if (Object.keys(valErrs).length > 0) { setErrors(valErrs); return; }
 
     setIsSubmitting(true);
     setErrors({});
 
+    try {
+      const token = localStorage.getItem('token');
+      if (token && job.id && typeof job.id === 'number') {
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/api/v1/jobs/${job.id}/apply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            applicantName: formData.applicantName,
+            applicantEmail: formData.applicantEmail,
+            portfolioUrl: formData.resumeUrl,
+            coverNote: formData.coverLetter,
+          })
+        });
+
+        if (response.status === 409) {
+          setErrors({ submit: 'You have already applied for this position.' });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend apply fallback:', err);
+    }
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
       onSubmitSuccess?.(job.id, { ...formData, resumeFile });
-    }, 1200);
+    }, 800);
   };
 
   const resetAndClose = () => {
@@ -73,9 +103,16 @@ export default function ApplyModal({ job, isOpen, onClose, onSubmitSuccess, appl
           data-testid="apply-modal"
           className="relative w-full max-w-lg bg-navy-950 border border-navy-750 rounded-2xl p-6 md:p-8 shadow-2xl z-10"
         >
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-white">Apply for {job.title}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold text-white">Apply for {job.title}</h2>
+                {job.isEasyApply !== false && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    ⚡ Easy Apply
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-txt-secondary mt-1">{job.company} · {job.location}</p>
             </div>
             <button
@@ -85,6 +122,12 @@ export default function ApplyModal({ job, isOpen, onClose, onSubmitSuccess, appl
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {errors.submit && (
+            <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-semibold">
+              ⚠️ {errors.submit}
+            </div>
+          )}
 
           {job.externalUrl && (
             <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs gap-3">

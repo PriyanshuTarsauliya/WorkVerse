@@ -120,10 +120,21 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
 
             {/* Quick info */}
             <div className="flex flex-wrap gap-2">
+              {job.isEasyApply !== false && (
+                <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 rounded-md">
+                  <Zap className="w-3.5 h-3.5 fill-emerald-500" />
+                  Easy Apply
+                </span>
+              )}
               <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-accent bg-accent/15 border border-accent/30 rounded-md">
                 <Briefcase className="w-3.5 h-3.5" />
                 {(job.jobType || 'FULL_TIME').replace('_', ' ')}
               </span>
+              {job.experienceLevel && (
+                <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/15 border border-indigo-500/30 rounded-md">
+                  {job.experienceLevel}
+                </span>
+              )}
               <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-txtMuted bg-nested border border-borderSubtle rounded-md">
                 <MapPin className="w-3.5 h-3.5" />
                 {job.location}
@@ -131,6 +142,11 @@ export default function JobDetailModal({ job, isOpen, onClose, onOpenApply, onSh
               <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-success bg-success-bg border border-success/30 rounded-md" data-testid="job-detail-salary">
                 {job.customSalaryString ? job.customSalaryString : formatSalary(job.salaryMin, job.salaryMax)}
               </span>
+              {job.applicationDeadline && (
+                <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/15 border border-rose-500/30 rounded-md">
+                  Apply by {job.applicationDeadline}
+                </span>
+              )}
               {job.postedDaysAgo != null && (
                 <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-txtMuted bg-nested border border-borderSubtle rounded-md">
                   <Clock className="w-3.5 h-3.5" />

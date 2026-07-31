@@ -9,6 +9,7 @@ export default function JobFilterBar({
   onResetFilters,
   totalJobsCount = 0,
   totalAllCount = 0,
+  isLoading = false,
   savedCount = 0,
   viewMode = 'grid',
   onViewModeChange,
@@ -50,7 +51,7 @@ export default function JobFilterBar({
 
   const categories = ['Engineering', 'Product & Data', 'Finance & Banking', 'Marketing & Sales', 'Design & UX', 'Operations & HR', 'Internships'];
   const jobTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'REMOTE', 'HYBRID'];
-  const expLevels = ['Entry Level', 'Mid Level', 'Senior Level', 'Lead / Staff'];
+  const expLevels = ['Internship', 'Entry Level', 'Mid Level', 'Senior Level', 'Lead / Staff', 'Executive'];
 
   const activeCount =
     (filters.search ? 1 : 0) +
@@ -278,7 +279,12 @@ export default function JobFilterBar({
       {/* Results count & Job Alert */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
-          {totalJobsCount < totalAllCount ? (
+          {isLoading ? (
+            <span className="inline-flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400 animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              Loading active openings...
+            </span>
+          ) : totalJobsCount < totalAllCount ? (
             <>Showing <span className="font-bold text-slate-900 dark:text-slate-100">{totalJobsCount}</span> matching roles out of <span className="font-semibold text-slate-900 dark:text-slate-100">{totalAllCount}</span> active listings</>
           ) : (
             <>Showing <span className="font-bold text-slate-900 dark:text-slate-100">{totalJobsCount}</span> active openings <span className="text-slate-600 dark:text-slate-400 font-normal">(10,000+ verified roles available)</span></>
@@ -408,18 +414,31 @@ export default function JobFilterBar({
                   </div>
                 </div>
 
-                {/* Remote */}
+                {/* Location & Quick Toggles */}
                 <div>
-                  <p className="text-[11px] font-semibold text-txtMuted uppercase tracking-wider mb-2">Location</p>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.remoteOnly || false}
-                      onChange={(e) => handleChange('remoteOnly', e.target.checked)}
-                      className="w-4 h-4 rounded border-borderSubtle text-accent focus:ring-accent/30 bg-nested"
-                    />
-                    <span className="text-xs font-medium text-txtMain">Remote / Hybrid only</span>
-                  </label>
+                  <p className="text-[11px] font-semibold text-txtMuted uppercase tracking-wider mb-2">Location & Quick Options</p>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.remoteOnly || false}
+                        onChange={(e) => handleChange('remoteOnly', e.target.checked)}
+                        className="w-4 h-4 rounded border-borderSubtle text-accent focus:ring-accent/30 bg-nested"
+                      />
+                      <span className="text-xs font-medium text-txtMain">Remote / Hybrid only</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.easyApplyOnly || false}
+                        onChange={(e) => handleChange('easyApplyOnly', e.target.checked)}
+                        className="w-4 h-4 rounded border-borderSubtle text-emerald-500 focus:ring-emerald-500/30 bg-nested"
+                      />
+                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        ⚡ Easy Apply Roles Only
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
 

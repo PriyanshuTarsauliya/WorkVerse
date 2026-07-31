@@ -10,7 +10,7 @@ import { ToastProvider, useToast } from './components/Toast';
 import { ReactLenis } from 'lenis/react';
 import BubbleBackground from './components/ui/BubbleBackground';
 import JobFilterBar from './components/jobs/JobFilterBar';
-import JobsGrid from './components/jobs/JobCard';
+import JobsGrid, { JobCardSkeleton } from './components/jobs/JobCard';
 import JobDetailModal from './components/jobs/JobDetailModal';
 import ApplyModal from './components/jobs/ApplyModal';
 import PostJobModal from './components/jobs/PostJobModal';
@@ -322,7 +322,7 @@ import { fetchApi } from './utils/api';
 function AppContent() {
   const toast = useToast();
   const fireConfetti = useConfetti();
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(MOCK_WORKVERSE_JOBS);
   const [currentPage, setCurrentPage] = useState(1);
   const [candidateProfile, setCandidateProfile] = useState(() => {
     try {
@@ -417,7 +417,7 @@ function AppContent() {
     applyTheme(theme);
   }, [theme]);
 
-  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
 
   useEffect(() => {
     const fetchBackendJobs = async () => {
@@ -1114,6 +1114,7 @@ function AppContent() {
                 onResetFilters={handleResetFilters}
                 totalJobsCount={filteredJobs.length}
                 totalAllCount={jobs.length}
+                isLoading={isLoadingJobs && jobs.length === 0}
                 savedCount={savedCount}
                 viewMode={viewMode}
                 onViewModeChange={handleViewModeChange}
@@ -1124,7 +1125,13 @@ function AppContent() {
                 totalNewAlerts={totalNewAlerts}
               />
 
-              {filteredJobs.length === 0 ? (
+              {isLoadingJobs && jobs.length === 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 w-full">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+                    <JobCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : filteredJobs.length === 0 ? (
                 /* ── Empty State ── */
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}

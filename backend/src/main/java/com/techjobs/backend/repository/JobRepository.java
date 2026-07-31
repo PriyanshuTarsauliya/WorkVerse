@@ -1,6 +1,7 @@
 package com.techjobs.backend.repository;
 
 import com.techjobs.backend.entity.Job;
+import com.techjobs.backend.entity.JobStatus;
 import com.techjobs.backend.entity.JobType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,9 +38,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
            "LOWER(j.category) LIKE :keyword")
     List<Job> searchByKeyword(@Param("keyword") String keyword);
 
-    // Pageable Search Query for production pagination
+    // Pageable Search Query for production pagination — now filters by ACTIVE status by default
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"techStack"})
     @Query("SELECT DISTINCT j FROM Job j WHERE " +
+           "j.status = :status AND " +
            "(:keyword IS NULL OR LOWER(j.title) LIKE CONCAT('%', :keyword, '%') OR LOWER(j.company) LIKE CONCAT('%', :keyword, '%')) AND " +
            "(:jobType IS NULL OR j.jobType = :jobType) AND " +
            "(:location IS NULL OR LOWER(j.location) LIKE CONCAT('%', :location, '%')) AND " +
@@ -49,6 +51,15 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             @Param("jobType") JobType jobType,
             @Param("location") String location,
             @Param("category") String category,
+            @Param("status") JobStatus status,
             Pageable pageable
     );
+
+    // ── New queries for LinkedIn/Naukri patterns ──
+
+    // Find all jobs posted by a specific employer
+    List<Job> findByEmployerIdOrderByCreatedAtDesc(Long employerId);
+
+    // Find jobs by employer and status
+    List<Job> findByEmployerIdAndStatus(Long employerId, JobStatus status);
 }

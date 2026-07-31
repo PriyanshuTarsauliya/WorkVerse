@@ -13,5 +13,8 @@ public interface JobService {
     Page<JobResponseDTO> getJobsPaged(String keyword, JobType jobType, String location, String category, Pageable pageable);
     JobResponseDTO getJobById(Long id);
     JobResponseDTO createJob(JobRequestDTO requestDTO);
+    JobResponseDTO updateJob(Long id, JobRequestDTO requestDTO);
     void deleteJob(Long id);
+    List<JobResponseDTO> getJobsByEmployer(Long employerId);
+    void incrementViewCount(Long jobId);
 }

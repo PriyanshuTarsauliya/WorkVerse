@@ -10,9 +10,12 @@ export default function PostJobModal({ isOpen, onClose, onJobPosted }) {
     location: '',
     jobType: 'FULL_TIME',
     category: 'Engineering',
+    experienceLevel: 'MID',
+    applicationDeadline: '',
+    isEasyApply: true,
     salaryMin: '',
     salaryMax: '',
-    currency: 'USD',
+    currency: 'INR',
     description: '',
     techStack: ['React', 'Spring Boot'],
   });
@@ -49,7 +52,7 @@ export default function PostJobModal({ isOpen, onClose, onJobPosted }) {
     setFormData({ ...formData, techStack: formData.techStack.filter((t) => t !== tag) });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const valErrs = validate();
     if (Object.keys(valErrs).length > 0) { setErrors(valErrs); return; }
@@ -57,31 +60,60 @@ export default function PostJobModal({ isOpen, onClose, onJobPosted }) {
     setIsSubmitting(true);
     setErrors({});
 
-    const newJob = {
-      id: Date.now(),
+    const minL = Number(formData.salaryMin) / 100000;
+    const maxL = formData.salaryMax ? Number(formData.salaryMax) / 100000 : null;
+    const formattedSalary = maxL ? `₹${minL.toFixed(0)} - ₹${maxL.toFixed(0)} LPA` : `₹${minL.toFixed(0)}+ LPA`;
+
+    const jobPayload = {
       title: formData.title,
       company: formData.company,
       location: formData.location,
       jobType: formData.jobType,
-      salaryMin: Number(formData.salaryMin),
-      salaryMax: formData.salaryMax ? Number(formData.salaryMax) : null,
-      currency: formData.currency,
+      category: formData.category || 'Engineering',
+      salaryRange: formattedSalary,
       description: formData.description,
       techStack: formData.techStack,
+      experienceLevel: formData.experienceLevel || 'MID',
+      isEasyApply: formData.isEasyApply !== false,
+      applicationDeadline: formData.applicationDeadline || null,
+    };
+
+    let postedJob = {
+      id: Date.now(),
+      ...jobPayload,
+      salaryMin: Number(formData.salaryMin),
+      salaryMax: formData.salaryMax ? Number(formData.salaryMax) : null,
       isNew: true,
       applicationCount: 0,
       postedDaysAgo: 0,
       companyRating: 4.5,
       companyReviewCount: 0,
-      experienceLevel: 'Mid Level',
-      experienceYears: '3+',
     };
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      onJobPosted?.(newJob);
-    }, 1000);
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const res = await fetch(`${baseUrl}/api/v1/jobs`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(jobPayload)
+        });
+        if (res.ok) {
+          const apiJob = await res.json();
+          postedJob = { ...postedJob, ...apiJob };
+        }
+      }
+    } catch (err) {
+      console.warn('Backend job posting fallback:', err);
+    }
+
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    onJobPosted?.(postedJob);
   };
 
   const resetAndClose = () => {
@@ -171,8 +203,37 @@ export default function PostJobModal({ isOpen, onClose, onJobPosted }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
+                    <label className="block text-sm font-medium text-txt-secondary mb-1.5">Experience Level</label>
+                    <select value={formData.experienceLevel} onChange={(e) => setFormData({ ...formData, experienceLevel: e.target.value })} className={selectClass}>
+                      <option value="INTERN">Internship</option>
+                      <option value="ENTRY">Entry Level (0-2 yrs)</option>
+                      <option value="MID">Mid Level (2-5 yrs)</option>
+                      <option value="SENIOR">Senior Level (5-8 yrs)</option>
+                      <option value="LEAD">Lead / Staff (8+ yrs)</option>
+                      <option value="EXECUTIVE">Executive / Director</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-txt-secondary mb-1.5">Application Deadline</label>
+                    <input type="date" value={formData.applicationDeadline} onChange={(e) => setFormData({ ...formData, applicationDeadline: e.target.value })} className={inputClass()} />
+                  </div>
+                  <div className="flex items-center pt-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.isEasyApply}
+                        onChange={(e) => setFormData({ ...formData, isEasyApply: e.target.checked })}
+                        className="w-4 h-4 rounded border-navy-750 text-brand focus:ring-brand/30 bg-navy-900"
+                      />
+                      <span className="text-sm font-semibold text-white">Enable ⚡ Easy Apply</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
                     <label className="block text-sm font-medium text-txt-secondary mb-1.5">Min salary *</label>
-                    <input type="number" value={formData.salaryMin} onChange={(e) => setFormData({ ...formData, salaryMin: e.target.value })} placeholder="120000" className={inputClass(errors.salaryMin)} />
+                    <input type="number" value={formData.salaryMin} onChange={(e) => setFormData({ ...formData, salaryMin: e.target.value })} placeholder="1200000" className={inputClass(errors.salaryMin)} />
                     {errors.salaryMin && <p className="text-rose-400 text-xs mt-1">{errors.salaryMin}</p>}
                   </div>
                   <div>

@@ -1,10 +1,12 @@
 package com.techjobs.backend.dto;
 
+import com.techjobs.backend.entity.ExperienceLevel;
 import com.techjobs.backend.entity.JobType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -33,4 +35,14 @@ public class JobRequestDTO {
     private String description;
 
     private List<String> techStack;
+
+    // ── New fields (LinkedIn/Naukri patterns) ──
+
+    private ExperienceLevel experienceLevel;
+
+    private LocalDate applicationDeadline;
+
+    private Boolean isEasyApply;
+
+    private Long employerId;
 }

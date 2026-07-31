@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -87,160 +88,107 @@ public class DataInitializer implements CommandLineRunner {
     private void seedJobs() {
         if (jobRepository.count() > 0) return;
 
+        // Employer user ID = 3 (recruiter@razorpay.com seeded above)
+        Long employerId = 3L;
+
         List<Job> sampleJobs = Arrays.asList(
-                Job.builder()
-                        .title("Senior Frontend Engineer")
-                        .company("Razorpay")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Engineering")
-                        .salaryRange("₹22,00,000 - ₹35,00,000 INR")
+                Job.builder().title("Senior Frontend Engineer").company("Razorpay").location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME).category("Engineering").salaryRange("₹22,00,000 - ₹35,00,000 INR")
                         .description("Build low-latency payment checkout experiences for over 8M merchants across India. Work with React 18, TypeScript, and micro-frontend architecture.")
                         .techStack(Arrays.asList("React", "TypeScript", "Redux", "Node.js", "Tailwind CSS"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(30)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Product Manager — Growth & Retention")
-                        .company("Swiggy")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Product & Data")
-                        .salaryRange("₹28,00,000 - ₹42,00,000 INR")
+                Job.builder().title("Product Manager — Growth & Retention").company("Swiggy").location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME).category("Product & Data").salaryRange("₹28,00,000 - ₹42,00,000 INR")
                         .description("Lead product strategy and conversion rate optimization for Swiggy Instamart. Analyze user funnels, conduct A/B tests, and scale daily active users.")
                         .techStack(Arrays.asList("Product Strategy", "Mixpanel", "SQL", "A/B Testing", "Agile"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.MID)
+                        .applicationDeadline(LocalDate.now().plusDays(45)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Senior Investment Analyst")
-                        .company("HDFC Securities")
-                        .location("Mumbai, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Finance & Banking")
-                        .salaryRange("₹18,00,000 - ₹28,00,000 INR")
+                Job.builder().title("Senior Investment Analyst").company("HDFC Securities").location("Mumbai, India")
+                        .jobType(JobType.FULL_TIME).category("Finance & Banking").salaryRange("₹18,00,000 - ₹28,00,000 INR")
                         .description("Perform equity research, financial modeling, and risk assessments for institutional portfolios in Indian equity and capital markets.")
                         .techStack(Arrays.asList("Financial Modeling", "Equity Research", "Valuation", "Excel", "Bloomberg"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(21)).isEasyApply(false).build(),
 
-                Job.builder()
-                        .title("Full Stack Developer (Next.js & Python)")
-                        .company("Postman")
-                        .location("Remote — India")
-                        .jobType(JobType.REMOTE)
-                        .category("Engineering")
-                        .salaryRange("₹20,00,000 - ₹32,00,000 INR")
+                Job.builder().title("Full Stack Developer (Next.js & Python)").company("Postman").location("Remote — India")
+                        .jobType(JobType.REMOTE).category("Engineering").salaryRange("₹20,00,000 - ₹32,00,000 INR")
                         .description("Work on Postman's API collaboration platform used by 25M+ developers worldwide. Ship features across frontend and high-throughput backend services.")
                         .techStack(Arrays.asList("Next.js", "React", "Python", "FastAPI", "PostgreSQL"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.MID)
+                        .applicationDeadline(LocalDate.now().plusDays(60)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Senior Data Scientist (LLMs & Search)")
-                        .company("Flipkart")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Product & Data")
-                        .salaryRange("₹32,00,000 - ₹50,00,000 INR")
+                Job.builder().title("Senior Data Scientist (LLMs & Search)").company("Flipkart").location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME).category("Product & Data").salaryRange("₹32,00,000 - ₹50,00,000 INR")
                         .description("Develop state-of-the-art recommendation models and LLM-powered search algorithms processing petabytes of e-commerce catalog data.")
                         .techStack(Arrays.asList("Python", "PyTorch", "Transformers", "Spark", "Vector DB"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(30)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Lead Brand & Growth Marketing Manager")
-                        .company("CRED")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.HYBRID)
-                        .category("Marketing & Sales")
-                        .salaryRange("₹25,00,000 - ₹38,00,000 INR")
+                Job.builder().title("Lead Brand & Growth Marketing Manager").company("CRED").location("Bengaluru, India")
+                        .jobType(JobType.HYBRID).category("Marketing & Sales").salaryRange("₹25,00,000 - ₹38,00,000 INR")
                         .description("Design and execute multi-channel performance marketing campaigns, influencer strategies, and viral growth initiatives for premium CRED members.")
                         .techStack(Arrays.asList("Performance Marketing", "SEO/SEM", "Brand Strategy", "Analytics"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.LEAD)
+                        .applicationDeadline(LocalDate.now().plusDays(25)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("UI/UX Product Designer")
-                        .company("Unacademy")
-                        .location("Remote — India")
-                        .jobType(JobType.REMOTE)
-                        .category("Design & UX")
-                        .salaryRange("₹15,00,000 - ₹24,00,000 INR")
+                Job.builder().title("UI/UX Product Designer").company("Unacademy").location("Remote — India")
+                        .jobType(JobType.REMOTE).category("Design & UX").salaryRange("₹15,00,000 - ₹24,00,000 INR")
                         .description("Create intuitive, accessible learning experiences for millions of students. Conduct user research, design wireframes, and craft polished UI components in Figma.")
                         .techStack(Arrays.asList("Figma", "User Research", "Wireframing", "Prototyping", "Design Systems"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.MID)
+                        .applicationDeadline(LocalDate.now().plusDays(40)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Java Microservices Backend Developer")
-                        .company("Goldman Sachs")
-                        .location("Hyderabad, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Engineering")
-                        .salaryRange("₹24,00,000 - ₹36,00,000 INR")
+                Job.builder().title("Java Microservices Backend Developer").company("Goldman Sachs").location("Hyderabad, India")
+                        .jobType(JobType.FULL_TIME).category("Engineering").salaryRange("₹24,00,000 - ₹36,00,000 INR")
                         .description("Build low-latency trading engines and risk management services using Spring Boot 3 and Java 21. Optimize DB queries and event-driven Kafka pipelines.")
                         .techStack(Arrays.asList("Java 21", "Spring Boot", "Kafka", "PostgreSQL", "Docker"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.MID)
+                        .applicationDeadline(LocalDate.now().plusDays(35)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Summer Software Engineering Intern 2025")
-                        .company("Google India")
-                        .location("Bengaluru / Hyderabad")
-                        .jobType(JobType.INTERNSHIP)
-                        .category("Internships")
-                        .salaryRange("₹12,00,000 - ₹15,00,000 INR")
+                Job.builder().title("Summer Software Engineering Intern 2025").company("Google India").location("Bengaluru / Hyderabad")
+                        .jobType(JobType.INTERNSHIP).category("Internships").salaryRange("₹12,00,000 - ₹15,00,000 INR")
                         .description("Work directly alongside Google software engineers on real production code for Search, Cloud, or Android. Paid 3-month internship with PPO opportunities.")
                         .techStack(Arrays.asList("C++", "Java", "Python", "Algorithms", "Data Structures"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.INTERN)
+                        .applicationDeadline(LocalDate.now().plusDays(14)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Operations & Business Strategy Lead")
-                        .company("Zomato")
-                        .location("Delhi NCR, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Operations & HR")
-                        .salaryRange("₹22,00,000 - ₹32,00,000 INR")
+                Job.builder().title("Operations & Business Strategy Lead").company("Zomato").location("Delhi NCR, India")
+                        .jobType(JobType.FULL_TIME).category("Operations & HR").salaryRange("₹22,00,000 - ₹32,00,000 INR")
                         .description("Optimize quick-commerce supply chain logistics and partner rider efficiency across tier 1 & 2 cities in India.")
                         .techStack(Arrays.asList("Supply Chain", "Operations", "SQL", "Data Analytics", "Vendor Mgmt"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.LEAD)
+                        .applicationDeadline(LocalDate.now().plusDays(30)).isEasyApply(false).build(),
 
-                Job.builder()
-                        .title("Cloud Solution Architect (Azure & AI)")
-                        .company("Microsoft")
-                        .location("Hyderabad, India")
-                        .jobType(JobType.HYBRID)
-                        .category("Engineering")
-                        .salaryRange("₹35,00,000 - ₹55,00,000 INR")
+                Job.builder().title("Cloud Solution Architect (Azure & AI)").company("Microsoft").location("Hyderabad, India")
+                        .jobType(JobType.HYBRID).category("Engineering").salaryRange("₹35,00,000 - ₹55,00,000 INR")
                         .description("Architect enterprise AI solutions leveraging Azure OpenAI and distributed cloud infrastructure for Fortune 500 enterprise clients.")
                         .techStack(Arrays.asList("Azure", "OpenAI", "Kubernetes", "C#", "System Architecture"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(45)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Staff Distributed Systems Engineer")
-                        .company("PhonePe")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Engineering")
-                        .salaryRange("₹40,00,000 - ₹65,00,000 INR")
+                Job.builder().title("Staff Distributed Systems Engineer").company("PhonePe").location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME).category("Engineering").salaryRange("₹40,00,000 - ₹65,00,000 INR")
                         .description("Architect fault-tolerant payment transaction processing pipelines handling over 100M daily UPI payments across India.")
                         .techStack(Arrays.asList("Java", "Go", "Cassandra", "Kafka", "Distributed Systems"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.LEAD)
+                        .applicationDeadline(LocalDate.now().plusDays(50)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Senior Reliability Engineer (SRE)")
-                        .company("Atlassian")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.REMOTE)
-                        .category("Engineering")
-                        .salaryRange("₹30,00,000 - ₹48,00,000 INR")
+                Job.builder().title("Senior Reliability Engineer (SRE)").company("Atlassian").location("Bengaluru, India")
+                        .jobType(JobType.REMOTE).category("Engineering").salaryRange("₹30,00,000 - ₹48,00,000 INR")
                         .description("Ensure 99.99% availability for Jira Cloud & Confluence global enterprise deployments. Automate chaos testing and infrastructure as code.")
                         .techStack(Arrays.asList("Terraform", "AWS", "Kubernetes", "Python", "Observability"))
-                        .build(),
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(30)).isEasyApply(true).build(),
 
-                Job.builder()
-                        .title("Database Kernel Core Engineer")
-                        .company("Oracle")
-                        .location("Bengaluru, India")
-                        .jobType(JobType.FULL_TIME)
-                        .category("Engineering")
-                        .salaryRange("₹26,00,000 - ₹40,00,000 INR")
+                Job.builder().title("Database Kernel Core Engineer").company("Oracle").location("Bengaluru, India")
+                        .jobType(JobType.FULL_TIME).category("Engineering").salaryRange("₹26,00,000 - ₹40,00,000 INR")
                         .description("Design high-performance memory management and transaction storage engine kernels for Autonomous Database Cloud.")
                         .techStack(Arrays.asList("C", "C++", "Linux Kernel", "Operating Systems", "Multithreading"))
-                        .build()
+                        .employerId(employerId).status(JobStatus.ACTIVE).experienceLevel(ExperienceLevel.SENIOR)
+                        .applicationDeadline(LocalDate.now().plusDays(30)).isEasyApply(false).build()
         );
 
         jobRepository.saveAll(sampleJobs);
@@ -251,65 +199,33 @@ public class DataInitializer implements CommandLineRunner {
         if (companyRepository.count() > 0) return;
 
         List<Company> sampleCompanies = Arrays.asList(
-                Company.builder()
-                        .name("Razorpay")
-                        .industry("Fintech / Payments")
-                        .location("Bengaluru, India")
-                        .companySize(CompanySize.ENTERPRISE)
-                        .rating(4.8)
-                        .reviewCount(1420)
+                Company.builder().name("Razorpay").industry("Fintech / Payments").location("Bengaluru, India")
+                        .companySize(CompanySize.ENTERPRISE).rating(4.8).reviewCount(1420)
                         .description("India's leading full-stack financial services platform powering payments for over 8 million businesses.")
                         .logoUrl("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80")
-                        .websiteUrl("https://razorpay.com")
-                        .techStack(Arrays.asList("React", "TypeScript", "Go", "PHP", "AWS"))
-                        .fundingStage("Unicorn ($370M Series F)")
-                        .isVerified(true)
-                        .build(),
+                        .websiteUrl("https://razorpay.com").techStack(Arrays.asList("React", "TypeScript", "Go", "PHP", "AWS"))
+                        .fundingStage("Unicorn ($370M Series F)").isVerified(true).build(),
 
-                Company.builder()
-                        .name("Swiggy")
-                        .industry("Consumer Tech / Quick Commerce")
-                        .location("Bengaluru, India")
-                        .companySize(CompanySize.ENTERPRISE)
-                        .rating(4.6)
-                        .reviewCount(980)
+                Company.builder().name("Swiggy").industry("Consumer Tech / Quick Commerce").location("Bengaluru, India")
+                        .companySize(CompanySize.ENTERPRISE).rating(4.6).reviewCount(980)
                         .description("Hyperlocal food delivery and quick commerce leader connecting 50M+ users across 500+ Indian cities.")
                         .logoUrl("https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=120&q=80")
-                        .websiteUrl("https://swiggy.com")
-                        .techStack(Arrays.asList("Java", "Go", "React Native", "Kafka", "Redis"))
-                        .fundingStage("Public (NSE/BSE Listed)")
-                        .isVerified(true)
-                        .build(),
+                        .websiteUrl("https://swiggy.com").techStack(Arrays.asList("Java", "Go", "React Native", "Kafka", "Redis"))
+                        .fundingStage("Public (NSE/BSE Listed)").isVerified(true).build(),
 
-                Company.builder()
-                        .name("CRED")
-                        .industry("Fintech / Premium Rewards")
-                        .location("Bengaluru, India")
-                        .companySize(CompanySize.MID)
-                        .rating(4.8)
-                        .reviewCount(610)
+                Company.builder().name("CRED").industry("Fintech / Premium Rewards").location("Bengaluru, India")
+                        .companySize(CompanySize.MID).rating(4.8).reviewCount(610)
                         .description("Members-only credit card bill payment platform rewarding high-trust individuals in India.")
                         .logoUrl("https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=120&q=80")
-                        .websiteUrl("https://cred.club")
-                        .techStack(Arrays.asList("Flutter", "Kotlin", "Spring Boot", "AWS", "Figma"))
-                        .fundingStage("Unicorn ($140M Series F)")
-                        .isVerified(true)
-                        .build(),
+                        .websiteUrl("https://cred.club").techStack(Arrays.asList("Flutter", "Kotlin", "Spring Boot", "AWS", "Figma"))
+                        .fundingStage("Unicorn ($140M Series F)").isVerified(true).build(),
 
-                Company.builder()
-                        .name("Postman")
-                        .industry("Developer Tools / SaaS")
-                        .location("Remote — India")
-                        .companySize(CompanySize.MID)
-                        .rating(4.9)
-                        .reviewCount(430)
+                Company.builder().name("Postman").industry("Developer Tools / SaaS").location("Remote — India")
+                        .companySize(CompanySize.MID).rating(4.9).reviewCount(430)
                         .description("The world's leading API platform used by over 25 million developers and 98% of Fortune 500 companies.")
                         .logoUrl("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=120&q=80")
-                        .websiteUrl("https://postman.com")
-                        .techStack(Arrays.asList("Next.js", "Node.js", "Python", "GraphQL", "PostgreSQL"))
-                        .fundingStage("Unicorn ($225M Series D)")
-                        .isVerified(true)
-                        .build()
+                        .websiteUrl("https://postman.com").techStack(Arrays.asList("Next.js", "Node.js", "Python", "GraphQL", "PostgreSQL"))
+                        .fundingStage("Unicorn ($225M Series D)").isVerified(true).build()
         );
 
         companyRepository.saveAll(sampleCompanies);

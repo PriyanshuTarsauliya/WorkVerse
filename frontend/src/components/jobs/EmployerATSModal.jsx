@@ -3,14 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Filter, CheckCircle2, X, ChevronRight, MessageSquare, Download, Sparkles, Building2, UserCheck, UserX, Clock } from 'lucide-react';
 
 const INITIAL_APPLICANTS = [
-  { id: 'app-1', name: 'Aarav Sharma', role: 'Senior Full Stack Engineer', score: 96, stage: 'Applied', experience: '5 yrs', location: 'Bengaluru', notes: 'Strong React & Node.js backend experience.' },
-  { id: 'app-2', name: 'Priya Sundaram', role: 'Backend Lead (Java/Spring)', score: 92, stage: 'Screened', experience: '6 yrs', location: 'Hyderabad', notes: 'Cleared preliminary technical resume screening.' },
-  { id: 'app-3', name: 'Rohan Verma', role: 'Frontend Architect', score: 88, stage: 'Interview Scheduled', experience: '7 yrs', location: 'Gurugram', notes: 'System design interview scheduled for Tuesday at 3 PM.' },
-  { id: 'app-4', name: 'Ananya Patel', role: 'Product Manager', score: 94, stage: 'Offered', experience: '4 yrs', location: 'Mumbai', notes: 'Offer letter dispatched with 24 LPA package.' },
-  { id: 'app-5', name: 'Vikram Malhotra', role: 'DevOps & Cloud Engineer', score: 79, stage: 'Rejected', experience: '3 yrs', location: 'Pune', notes: 'Skill gaps in Kubernetes cluster deployment.' },
+  { id: 1, jobId: 1, name: 'Aarav Sharma', role: 'Senior Full Stack Engineer', score: 96, stage: 'APPLIED', experience: '5 yrs', location: 'Bengaluru', notes: 'Strong React & Node.js backend experience.' },
+  { id: 2, jobId: 1, name: 'Priya Sundaram', role: 'Backend Lead (Java/Spring)', score: 92, stage: 'UNDER_REVIEW', experience: '6 yrs', location: 'Hyderabad', notes: 'Cleared preliminary technical resume screening.' },
+  { id: 3, jobId: 1, name: 'Rohan Verma', role: 'Frontend Architect', score: 88, stage: 'SHORTLISTED', experience: '7 yrs', location: 'Gurugram', notes: 'System design interview scheduled for Tuesday at 3 PM.' },
+  { id: 4, jobId: 1, name: 'Ananya Patel', role: 'Product Manager', score: 94, stage: 'OFFERED', experience: '4 yrs', location: 'Mumbai', notes: 'Offer letter dispatched with 24 LPA package.' },
+  { id: 5, jobId: 1, name: 'Vikram Malhotra', role: 'DevOps & Cloud Engineer', score: 79, stage: 'REJECTED', experience: '3 yrs', location: 'Pune', notes: 'Skill gaps in Kubernetes cluster deployment.' },
 ];
 
-const STAGES = ['Applied', 'Screened', 'Interview Scheduled', 'Offered', 'Rejected'];
+const STAGES = [
+  { value: 'APPLIED', label: 'Applied' },
+  { value: 'UNDER_REVIEW', label: 'Under Review' },
+  { value: 'SHORTLISTED', label: 'Shortlisted' },
+  { value: 'INTERVIEW_SCHEDULED', label: 'Interview' },
+  { value: 'OFFERED', label: 'Offered' },
+  { value: 'REJECTED', label: 'Rejected' },
+  { value: 'WITHDRAWN', label: 'Withdrawn' },
+];
 
 export default function EmployerATSModal({ isOpen, onClose }) {
   const [applicants, setApplicants] = useState(INITIAL_APPLICANTS);
@@ -20,10 +28,32 @@ export default function EmployerATSModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleUpdateStage = (applicantId, newStage) => {
+  const handleUpdateStage = async (applicant, newStage) => {
+    // Update local state
     setApplicants((prev) =>
-      prev.map((item) => (item.id === applicantId ? { ...item, stage: newStage } : item))
+      prev.map((item) => (item.id === applicant.id ? { ...item, stage: newStage } : item))
     );
+    if (selectedApplicant?.id === applicant.id) {
+      setSelectedApplicant((prev) => ({ ...prev, stage: newStage }));
+    }
+
+    // Try calling backend endpoint if authToken present
+    try {
+      const token = localStorage.getItem('token');
+      if (token && applicant.jobId && typeof applicant.id === 'number') {
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        await fetch(`${baseUrl}/api/v1/jobs/${applicant.jobId}/applications/${applicant.id}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ newStatus: newStage }),
+        });
+      }
+    } catch (err) {
+      console.warn('Backend status update fallback:', err);
+    }
   };
 
   const handleAddNote = (e) => {
@@ -85,18 +115,18 @@ export default function EmployerATSModal({ isOpen, onClose }) {
               All Candidates ({applicants.length})
             </button>
             {STAGES.map((stg) => {
-              const count = applicants.filter((a) => a.stage === stg).length;
+              const count = applicants.filter((a) => a.stage === stg.value).length;
               return (
                 <button
-                  key={stg}
-                  onClick={() => setActiveTab(stg)}
+                  key={stg.value}
+                  onClick={() => setActiveTab(stg.value)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-                    activeTab === stg
+                    activeTab === stg.value
                       ? 'bg-accent text-white'
                       : 'bg-nested text-txtMuted hover:text-txtMain'
                   }`}
                 >
-                  {stg} ({count})
+                  {stg.label} ({count})
                 </button>
               );
             })}
@@ -154,11 +184,11 @@ export default function EmployerATSModal({ isOpen, onClose }) {
                       </label>
                       <select
                         value={selectedApplicant.stage}
-                        onChange={(e) => handleUpdateStage(selectedApplicant.id, e.target.value)}
+                        onChange={(e) => handleUpdateStage(selectedApplicant, e.target.value)}
                         className="w-full bg-surface border border-borderStrong focus:border-accent rounded-xl px-3 py-2 text-xs font-semibold text-txtMain outline-none"
                       >
                         {STAGES.map((s) => (
-                          <option key={s} value={s}>{s}</option>
+                          <option key={s.value} value={s.value}>{s.label}</option>
                         ))}
                       </select>
                     </div>

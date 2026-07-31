@@ -3,6 +3,7 @@ package com.techjobs.backend.service;
 import com.techjobs.backend.dto.JobRequestDTO;
 import com.techjobs.backend.dto.JobResponseDTO;
 import com.techjobs.backend.entity.Job;
+import com.techjobs.backend.entity.JobStatus;
 import com.techjobs.backend.entity.JobType;
 import com.techjobs.backend.exception.ResourceNotFoundException;
 import com.techjobs.backend.repository.JobApplicationRepository;
@@ -31,6 +32,7 @@ public class JobServiceImpl implements JobService {
             jobType,
             location != null ? location.toLowerCase() : null,
             category != null ? category.toLowerCase() : null,
+            JobStatus.ACTIVE,
             Pageable.unpaged()
         );
         return mapJobsWithApplicationCounts(jobsPage.getContent());
@@ -44,6 +46,7 @@ public class JobServiceImpl implements JobService {
             jobType,
             location != null ? location.toLowerCase() : null,
             category != null ? category.toLowerCase() : null,
+            JobStatus.ACTIVE,
             pageable
         );
         List<JobResponseDTO> responseDTOs = mapJobsWithApplicationCounts(jobsPage.getContent());
@@ -88,6 +91,11 @@ public class JobServiceImpl implements JobService {
                 .salaryRange(requestDTO.getSalaryRange())
                 .description(requestDTO.getDescription())
                 .techStack(requestDTO.getTechStack())
+                .experienceLevel(requestDTO.getExperienceLevel())
+                .applicationDeadline(requestDTO.getApplicationDeadline())
+                .isEasyApply(requestDTO.getIsEasyApply() != null ? requestDTO.getIsEasyApply() : true)
+                .employerId(requestDTO.getEmployerId())
+                .status(JobStatus.ACTIVE)
                 .build();
 
         Job savedJob = jobRepository.save(job);
@@ -96,9 +104,48 @@ public class JobServiceImpl implements JobService {
 
     @Override
     @Transactional
+    public JobResponseDTO updateJob(Long id, JobRequestDTO requestDTO) {
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job", "id", id));
+
+        if (requestDTO.getTitle() != null) job.setTitle(requestDTO.getTitle());
+        if (requestDTO.getCompany() != null) job.setCompany(requestDTO.getCompany());
+        if (requestDTO.getLocation() != null) job.setLocation(requestDTO.getLocation());
+        if (requestDTO.getJobType() != null) job.setJobType(requestDTO.getJobType());
+        if (requestDTO.getCategory() != null) job.setCategory(requestDTO.getCategory());
+        if (requestDTO.getSalaryRange() != null) job.setSalaryRange(requestDTO.getSalaryRange());
+        if (requestDTO.getDescription() != null) job.setDescription(requestDTO.getDescription());
+        if (requestDTO.getTechStack() != null) job.setTechStack(requestDTO.getTechStack());
+        if (requestDTO.getExperienceLevel() != null) job.setExperienceLevel(requestDTO.getExperienceLevel());
+        if (requestDTO.getApplicationDeadline() != null) job.setApplicationDeadline(requestDTO.getApplicationDeadline());
+        if (requestDTO.getIsEasyApply() != null) job.setIsEasyApply(requestDTO.getIsEasyApply());
+
+        Job updatedJob = jobRepository.save(job);
+        long appCount = applicationRepository.countByJobId(id);
+        return JobResponseDTO.fromEntity(updatedJob, appCount);
+    }
+
+    @Override
+    @Transactional
     public void deleteJob(Long id) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job", "id", id));
         jobRepository.delete(job);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<JobResponseDTO> getJobsByEmployer(Long employerId) {
+        List<Job> jobs = jobRepository.findByEmployerIdOrderByCreatedAtDesc(employerId);
+        return mapJobsWithApplicationCounts(jobs);
+    }
+
+    @Override
+    @Transactional
+    public void incrementViewCount(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job", "id", jobId));
+        job.setViewCount(job.getViewCount() != null ? job.getViewCount() + 1 : 1L);
+        jobRepository.save(job);
     }
 }

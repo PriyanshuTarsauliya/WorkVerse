@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MapPin, DollarSign, Clock, Users, Star, Share2, Zap, TrendingUp, Bookmark, Sparkles, IndianRupee, CheckCircle, Eye, Flame
+  MapPin, DollarSign, Clock, Users, Star, Share2, Zap, TrendingUp, Bookmark, Sparkles, IndianRupee, CheckCircle, Eye, Flame, Calendar
 } from 'lucide-react';
 import SpotlightCard from '../ui/SpotlightCard';
 
@@ -108,6 +108,12 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
           {/* Top Badges & Actions Row */}
           <div className="flex items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              {job.isEasyApply !== false && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1 shrink-0 shadow-sm">
+                  <Zap className="w-2.5 h-2.5 fill-emerald-500" />
+                  Easy Apply
+                </span>
+              )}
               {isTopRecommended && (
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1 shrink-0 shadow-sm">
                   <Sparkles className="w-3 h-3 fill-amber-500 dark:fill-amber-400" />
@@ -120,13 +126,13 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
                   Closing Soon
                 </span>
               )}
-              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-nested border border-borderStrong text-[10px] text-slate-700 dark:text-slate-200 font-semibold shrink-0">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-nested border border-borderStrong text-[10px] text-slate-700 dark:text-slate-200 font-semibold shrink-0">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                 </span>
                 <Eye className="w-2.5 h-2.5 text-slate-500 dark:text-slate-300" />
-                {liveViewers} viewing
+                {job.viewCount ? `${job.viewCount} views` : `${liveViewers} viewing`}
               </span>
             </div>
 
@@ -216,9 +222,20 @@ export function JobCard({ job, index, onApply, onToggleBookmark, onShareJob, app
             <span className="px-2.5 py-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-nested border border-borderStrong rounded-md">
               {(job.jobType || 'FULL_TIME').replace('_', ' ')}
             </span>
-            {job.experienceYears && (
+            {job.experienceLevel && (
+              <span className="px-2 py-0.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 rounded-md">
+                {job.experienceLevel}
+              </span>
+            )}
+            {job.experienceYears && !job.experienceLevel && (
               <span className="px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-nested border border-borderStrong rounded-md">
                 {job.experienceYears} yrs
+              </span>
+            )}
+            {job.applicationDeadline && (
+              <span className="flex items-center gap-1 px-2 py-0.5 text-xs text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-md font-semibold">
+                <Calendar className="w-3 h-3" />
+                Apply by {job.applicationDeadline}
               </span>
             )}
             <span className="flex items-center gap-1 px-2 py-0.5 text-xs text-slate-500 dark:text-slate-400 bg-nested border border-borderStrong rounded-md font-medium">

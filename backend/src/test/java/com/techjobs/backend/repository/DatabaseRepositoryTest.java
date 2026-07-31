@@ -2,6 +2,7 @@ package com.techjobs.backend.repository;
 
 import com.techjobs.backend.entity.Job;
 import com.techjobs.backend.entity.JobApplication;
+import com.techjobs.backend.entity.JobStatus;
 import com.techjobs.backend.entity.JobType;
 import com.techjobs.backend.entity.User;
 import org.junit.jupiter.api.DisplayName;
@@ -210,7 +211,7 @@ public class DatabaseRepositoryTest {
             entityManager.flush();
 
             PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("id").ascending());
-            Page<Job> pageResult = jobRepository.filterJobs("developer", JobType.FULL_TIME, "new york", "software development", pageRequest);
+            Page<Job> pageResult = jobRepository.filterJobs("developer", JobType.FULL_TIME, "new york", "software development", JobStatus.ACTIVE, pageRequest);
 
             assertThat(pageResult.getTotalElements()).isEqualTo(15);
             assertThat(pageResult.getTotalPages()).isEqualTo(2);

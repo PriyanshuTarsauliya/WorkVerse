@@ -1,9 +1,12 @@
 package com.techjobs.backend.dto;
 
+import com.techjobs.backend.entity.ExperienceLevel;
 import com.techjobs.backend.entity.Job;
+import com.techjobs.backend.entity.JobStatus;
 import com.techjobs.backend.entity.JobType;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +28,15 @@ public class JobResponseDTO {
     private long applicationCount;
     private LocalDateTime createdAt;
 
+    // ── New fields (LinkedIn/Naukri patterns) ──
+    private Long employerId;
+    private JobStatus status;
+    private ExperienceLevel experienceLevel;
+    private LocalDate applicationDeadline;
+    private Boolean isEasyApply;
+    private Long viewCount;
+    private LocalDateTime updatedAt;
+
     public static JobResponseDTO fromEntity(Job job, long applicationCount) {
         return JobResponseDTO.builder()
                 .id(job.getId())
@@ -38,6 +50,13 @@ public class JobResponseDTO {
                 .techStack(job.getTechStack())
                 .applicationCount(applicationCount)
                 .createdAt(job.getCreatedAt())
+                .employerId(job.getEmployerId())
+                .status(job.getStatus())
+                .experienceLevel(job.getExperienceLevel())
+                .applicationDeadline(job.getApplicationDeadline())
+                .isEasyApply(job.getIsEasyApply())
+                .viewCount(job.getViewCount())
+                .updatedAt(job.getUpdatedAt())
                 .build();
     }
 }

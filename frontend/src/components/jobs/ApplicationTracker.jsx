@@ -25,7 +25,7 @@ const STAGES = [
   },
   {
     id: 'in_review',
-    label: 'In Review',
+    label: 'Under Review',
     accentColor: 'from-amber-500 to-orange-500',
     borderColor: 'border-amber-500/30',
     badgeStyle: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
@@ -41,12 +41,20 @@ const STAGES = [
   },
   {
     id: 'offer_rejected',
-    label: 'Offer / Decided',
+    label: 'Offered / Decided',
     accentColor: 'from-emerald-500 to-teal-500',
     borderColor: 'border-emerald-500/30',
     badgeStyle: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     dropHint: 'Final decision stage'
   }
+];
+
+const TIMELINE_STEPS = [
+  { key: 'APPLIED', label: 'Application Received', description: 'Your application was successfully submitted to the employer.' },
+  { key: 'UNDER_REVIEW', label: 'Under Review', description: 'Recruiters are reviewing your resume and profile experience.' },
+  { key: 'SHORTLISTED', label: 'Shortlisted', description: 'Great news! You passed initial screening and were shortlisted.' },
+  { key: 'INTERVIEW_SCHEDULED', label: 'Interview Scheduled', description: 'Technical and cultural interviews are currently scheduled.' },
+  { key: 'OFFERED', label: 'Offer Extended', description: 'Congratulations! An official job offer has been issued.' },
 ];
 
 const formatSalaryRupees = (min, max) => {
@@ -56,10 +64,31 @@ const formatSalaryRupees = (min, max) => {
   return maxLakhs ? `₹${minLakhs}–${maxLakhs}L` : `₹${minLakhs}L+`;
 };
 
-export default function ApplicationTracker({ applications, allJobs, onUpdateStage, onOpenDetail }) {
+export default function ApplicationTracker({ applications = {}, allJobs = [], onUpdateStage, onOpenDetail }) {
   const toast = useToast();
   const [activeTab, setActiveTab] = useState('saved');
   const [draggedOverStage, setDraggedOverStage] = useState(null);
+  const [backendApps, setBackendApps] = useState([]);
+
+  React.useEffect(() => {
+    const fetchBackendApplications = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const res = await fetch(`${baseUrl}/api/v1/jobs/applications/mine`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setBackendApps(data);
+        }
+      } catch (err) {
+        console.warn('Could not fetch backend applications:', err);
+      }
+    };
+    fetchBackendApplications();
+  }, []);
 
   // Group jobs by stage
   const groupedJobs = STAGES.reduce((acc, stage) => {
